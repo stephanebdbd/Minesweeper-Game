@@ -7,18 +7,16 @@ def create_board(n, m):
 
 def print_board(board):
     x, y = get_size(board)
-    implem = len(str(x))
-    ligne = str(' ' * (implem + 4))
-    for i in range(len(str(y))):
-        ligne += str(' ' * ((10 ** i) - 1))
-        for j in range(((10 ** i) - 1), y):
-            ligne += str(j) + ' '
+    implem = len(str(x - 1))
+    for i in range(1 - len(str(y - 1)), 1):
+        ligne = str(' ' * (2 * (10 * (-i)) + implem + 2))
+        for j in range(10 * (-i), y):
+            ligne += ' ' + str(j)[len(str(j)) - 1 + i]
         print(ligne)
-    print((implem + 2) * ' ' + ((2 * x) + 3) * '_')
-    for i in range(len(str(x))):
-        for j in range(((10 ** i) - 1), x):
-            print(str(' ' * (implem - i)) + str(j) + ' | ' + str('. ' * x) + '|')
-    print((implem + 2) * ' ' + ((2 * x) + 3) * '_')
+    print((implem + 1) * ' ' + ((2 * y) + 3) * '_')
+    for i in range(x):
+        print(str(' ' * (implem - len(str(i)))) + str(i) + ' | ' + str('. ' * y) + '|')
+    print((implem + 1) * ' ' + ((2 * y) + 3) * '_')
 
 
 def get_size(board):
@@ -60,3 +58,5 @@ def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
 
 
 # Code principal
+tableau = create_board(int(input()), int(input()))
+print_board(tableau)
