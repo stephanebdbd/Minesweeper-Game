@@ -56,6 +56,4 @@ def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
             mines += 1
     return res
 
-
 # Code principal
-
