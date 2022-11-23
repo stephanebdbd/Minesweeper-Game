@@ -6,7 +6,19 @@ def create_board(n, m):
 
 
 def print_board(board):
-
+    x, y = get_size(board)
+    implem = len(str(x))
+    ligne = str(' ' * (implem + 4))
+    for i in range(len(str(y))):
+        ligne += str(' ' * ((10 ** i) - 1))
+        for j in range(((10 ** i) - 1), y):
+            ligne += str(j) + ' '
+        print(ligne)
+    print((implem + 2) * ' ' + ((2 * x) + 3) * '_')
+    for i in range(len(str(x))):
+        for j in range(((10 ** i) - 1), x):
+            print(str(' ' * (implem - i)) + str(j) + ' | ' + str('. ' * x) + '|')
+    print((implem + 2) * ' ' + ((2 * x) + 3) * '_')
 
 
 def get_size(board):
@@ -45,30 +57,6 @@ def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
             res.append([abs_x, ord_y])
             mines += 1
     return res
-
-
-def fill_in_board(reference_board):
-
-
-
-def propagate_click(game_board, reference_board, pos_x, pos_y):
-
-
-
-def parse_input(n, m):
-
-
-
-def check_win(game_board, reference_board, mines_list, total_flags):
-
-
-
-def init_game(n, m, number_of_mines):
-
-
-
-def main():
-
 
 
 # Code principal
