@@ -1,4 +1,4 @@
-from random import randint, seed
+from random import *
 
 
 def create_board(n, m):
@@ -68,3 +68,7 @@ def init_game(n, m, number_of_mines):
 
 
 def main():
+
+
+
+# Code principal
