@@ -58,5 +58,4 @@ def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
 
 
 # Code principal
-tableau = create_board(int(input()), int(input()))
-print_board(tableau)
+
