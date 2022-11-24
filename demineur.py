@@ -15,7 +15,7 @@ def print_board(board):
         print(ligne)
     print((implem + 1) * ' ' + ((2 * y) + 3) * '_')
     for i in range(x):
-        print(str(' ' * (implem - len(str(i)))) + str(i) + ' | ' + str('. ' * y) + '|')
+        print(' ' * (implem - len(str(i))) + str(i) + ' | ' + '. ' * y + '|')
     print((implem + 1) * ' ' + ((2 * y) + 3) * '_')
 
 
@@ -50,10 +50,22 @@ def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
     seed(420)
     while mines < number_of_mines:
         abs_x, ord_y = randint(0, x), randint(0, y)
-        if [abs_x, ord_y] not in voisins:
+        if [abs_x, ord_y] not in voisins and (abs_x, ord_y) != (first_pos_x, first_pos_y):
             reference_board[abs_x][ord_y] = 'F'
             res.append([abs_x, ord_y])
             mines += 1
     return res
 
+
+def fill_in_board(reference_board):
+    num = 0
+    for i in range(len(reference_board)):
+        for j in range(len(reference_board[0])):
+            if reference_board[i][j] != 'F':
+                liste = get_neighbors(reference_board, j, i)
+                for k in liste:
+                    num = 0
+                    if reference_board[k[0]][k[1]] == 'F':
+                        num += 1
+                reference_board[i][j] = num
 # Code principal
