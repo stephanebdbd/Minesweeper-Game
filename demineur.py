@@ -54,7 +54,6 @@ def get_neighbors(board, pos_x, pos_y):
 def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
     voisins, bombes = get_neighbors(reference_board, first_pos_x, first_pos_y), 0
     (x, y), res = get_size(reference_board), []
-    seed(420)
     while bombes != number_of_mines:
         abs_x, ord_y = randint(0, x - 1), randint(0, y - 1)
         if [abs_x, ord_y] not in voisins and (abs_x, ord_y) != (first_pos_x, first_pos_y):
@@ -115,7 +114,8 @@ def check_win(game_board, reference_board, mines_list, total_flags):
 def init_game(n, m, number_of_mines):
     game_board, reference_board = create_board(n, m), create_board(n, m)
     print_board(game_board)
-    first_pos_x, first_pos_y = int(input()), int(input())
+    first_pos_y = int(input())
+    first_pos_x = int(input())
     mines_list = place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y)
     reference_board[first_pos_y][first_pos_x] = 0
     game_board[first_pos_y][first_pos_x] = 0
@@ -162,5 +162,4 @@ def main():
             print_board(game_board)
 
 
-# Code principal
 main()
