@@ -114,6 +114,7 @@ def check_win(game_board, reference_board, mines_list, total_flags):
 
 def init_game(n, m, number_of_mines):
     game_board, reference_board = create_board(n, m), create_board(n, m)
+    print_board(game_board)
     first_pos_x, first_pos_y = int(input()), int(input())
     mines_list = place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y)
     reference_board[first_pos_y][first_pos_x] = 0
