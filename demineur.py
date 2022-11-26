@@ -8,6 +8,9 @@ from random import *
 import sys
 
 
+sys.getrecursionlimit()
+
+
 def create_board(n, m):
     return [['.' for _ in range(n)] for _ in range(m)]
 
@@ -58,7 +61,7 @@ def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
     (x, y), res = get_size(reference_board), []
     while bombes != number_of_mines:
         abs_x, ord_y = randint(0, x - 1), randint(0, y - 1)
-        if [abs_x, ord_y] not in voisins and (abs_x, ord_y) != (first_pos_x, first_pos_y):
+        if (abs_x, ord_y) not in voisins and (abs_x, ord_y) != (first_pos_x, first_pos_y):
             reference_board[ord_y][abs_x] = 'X'
             res.append((abs_x, ord_y))
             bombes += 1
@@ -69,7 +72,7 @@ def fill_in_board(reference_board):
     for i in range(len(reference_board)):
         for j in range(len(reference_board[0])):
             if reference_board[i][j] == '.':
-                reference_board[i][j] = 0
+                reference_board[i][j] = '0'
     for i in range(len(reference_board)):
         for j in range(len(reference_board[0])):
             liste, number = get_neighbors(reference_board, j, i), 0
@@ -80,26 +83,18 @@ def fill_in_board(reference_board):
 
 
 def propagate_click(game_board, reference_board, pos_x, pos_y):
-    res, zero, (x, y) = True, True, get_size(game_board)
-    if game_board[pos_y][pos_x] == '.':
-        game_board[pos_y][pos_x] = reference_board[pos_y][pos_x]
+    game_board[pos_y][pos_x] = reference_board[pos_y][pos_x]
     for i, j in get_neighbors(game_board, pos_x, pos_y):
-        if reference_board[j][i] != '0':
-            zero = False
-        if reference_board[j][i] != 'X':
-            res = False
-    if game_board[pos_y][pos_x] == 0 and zero and res:
+        game_board[j][i] = reference_board[j][i]
+    if game_board[pos_y][pos_x] == '0':
         if pos_y - 1 >= 0:
             propagate_click(game_board, reference_board, pos_x, pos_y - 1)
-        if pos_y + 1 < y:
+        if pos_y + 1 < len(game_board):
             propagate_click(game_board, reference_board, pos_x, pos_y + 1)
         if pos_x - 1 >= 0:
             propagate_click(game_board, reference_board, pos_x - 1, pos_y)
-        if pos_x + 1 < x:
+        if pos_x + 1 < len(game_board[0]):
             propagate_click(game_board, reference_board, pos_x + 1, pos_y)
-    else:
-        for i, j in get_neighbors(game_board, pos_x, pos_y):
-            game_board[j][i] = reference_board[j][i]
 
 
 def parse_input(n, m):
@@ -124,10 +119,9 @@ def init_game(n, m, number_of_mines):
     mines_list = place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y)
     for i, j in mines_list:
         reference_board[j][i] = 'X'
+    reference_board[first_pos_y][first_pos_x], game_board[first_pos_y][first_pos_x] = '0', '0'
     fill_in_board(reference_board)
     propagate_click(game_board, reference_board, first_pos_x, first_pos_y)
-    reference_board[first_pos_y][first_pos_x] = '0'
-    game_board[first_pos_y][first_pos_x] = '0'
     print_board(game_board)
     return game_board, reference_board, mines_list
 
@@ -145,18 +139,17 @@ def main():
             for j in range(m):
                 if reference_board[j][i] == 'X':
                     bombes += 1
-                if game_board[j][i] == 'F' and reference_board == 'X':
+                if game_board[j][i] == 'F' and reference_board[j][i] == 'X':
                     flags += 1
         if not (check_win(game_board, reference_board, mines_list, flags) or bombes == len(mines_list)):
             print_board(game_board)
     if check_win(game_board, reference_board, mines_list, flags):
         print_board(game_board)
-        print("Bravo vous avez gagné !")
+        print('Bravo, vous avez gagné !')
     else:
         for i, j in mines_list:
-            game_board[i][j] = reference_board[i][j]
+            game_board[j][i] = reference_board[j][i]
         print_board(game_board)
-        print("Dommage, vous avez perdu.")
 
 
 if __name__ == '__main__':
