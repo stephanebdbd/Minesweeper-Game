@@ -132,22 +132,21 @@ def init_game(n, m, number_of_mines):
 
 
 def main():
-    win, n, m, number_of_mines = False, int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
-    flags, (game_board, reference_board, mines_list) = 0, init_game(n, m, number_of_mines)
-    while not win:
+    flags, bombes, win, n, m, number_of_mines = 0, 0, False, int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
+    game_board, reference_board, mines_list = init_game(n, m, number_of_mines)
+    while not check_win(game_board, reference_board, mines_list, flags) or bombes == len(mines_list):
         flags, bombes, (game, pos_x, pos_y) = 0, 0, parse_input(n, m)
         if game == 'c':
             propagate_click(game_board, reference_board, pos_x, pos_y)
         else:
-            reference_board[pos_y][pos_x], game_board[pos_y][pos_x] = 'F', 'F'
-        for i in reference_board:
-            for j in i:
-                if j == 'X':
+            game_board[pos_y][pos_x] = 'F'
+        for i in range(n):
+            for j in range(m):
+                if reference_board[j][i] == 'X':
                     bombes += 1
-                if j == 'F':
+                if game_board[j][i] == 'F' and reference_board == 'X':
                     flags += 1
-        win = check_win(game_board, reference_board, mines_list, flags) or bombes == len(mines_list)
-        if not win:
+        if not (check_win(game_board, reference_board, mines_list, flags) or bombes == len(mines_list)):
             print_board(game_board)
     if check_win(game_board, reference_board, mines_list, flags):
         print_board(game_board)
