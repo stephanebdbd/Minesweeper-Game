@@ -157,4 +157,5 @@ def main():
         print_board(game_board)
 
 
-main()
+if __name__ == '__main__':
+    main()
