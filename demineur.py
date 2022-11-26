@@ -1,6 +1,3 @@
-# Prenom : Stéphane
-# Nom : Badi Budu
-# Matricule : 569 082
 from random import *
 import sys
 
@@ -66,11 +63,15 @@ def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
 def fill_in_board(reference_board):
     for i in range(len(reference_board)):
         for j in range(len(reference_board[0])):
-            if reference_board[i][j] != 'X' or reference_board[i][j] == 0:
-                liste, reference_board[i][j] = get_neighbors(reference_board, j, i), 0
-                for k, l in liste:
-                    if reference_board[l][k] == 'X':
-                        reference_board[l][k] += 1
+            if reference_board[i][j] == '.':
+                reference_board[i][j] = 0
+    for i in range(len(reference_board)):
+        for j in range(len(reference_board[0])):
+            liste, number = get_neighbors(reference_board, j, i), 0
+            for k, l in liste:
+                if reference_board[l][k] == 'X':
+                    number += 1
+            reference_board[j][i] = str(number)
 
 
 def propagate_click(game_board, reference_board, pos_x, pos_y):
@@ -96,17 +97,16 @@ def propagate_click(game_board, reference_board, pos_x, pos_y):
 
 
 def parse_input(n, m):
-    action, pos_x, pos_y = -1, -1, -1
-    while action not in ['c', 'f'] and not n > pos_x >= 0 <= pos_y < m:
-        action, pos_x, pos_y = str(input()), int(input()), int(input())
-    return [action, pos_x, pos_y]
+    action, pos_x, pos_y = str(input()), int(input()), int(input())
+    if action in ['c', 'f'] and n > pos_x >= 0 <= pos_y < m:
+        return [action, pos_x, pos_y]
 
 
 def check_win(game_board, reference_board, mines_list, total_flags):
     hide = 0
     for i in range(len(game_board)):
         for j in range(len(game_board[0])):
-            if reference_board[j][i] == 0 and game_board[j][i] == '.':
+            if reference_board[j][i] == 'X' and game_board[j][i] == '.':
                 hide += 1
     return total_flags == len(mines_list) or hide == len(mines_list)
 
@@ -117,49 +117,40 @@ def init_game(n, m, number_of_mines):
     first_pos_y = int(input())
     first_pos_x = int(input())
     mines_list = place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y)
-    reference_board[first_pos_y][first_pos_x] = 0
-    game_board[first_pos_y][first_pos_x] = 0
     for i, j in mines_list:
         reference_board[j][i] = 'X'
     fill_in_board(reference_board)
+    propagate_click(game_board, reference_board, first_pos_x, first_pos_y)
+    reference_board[first_pos_y][first_pos_x] = '0'
+    game_board[first_pos_y][first_pos_x] = '0'
     print_board(game_board)
     return game_board, reference_board, mines_list
 
 
-def number_of_flags(game_board):
-    flags = 0
-    for i in game_board:
-        for j in i:
-            if j == 'F':
-                flags += 1
-    return flags
-
-
 def main():
-    win1, win2, win = False, False, False
-    n, m, number_of_mines = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
-    game_board, reference_board, mines_list = init_game(n, m, number_of_mines)
+    win, n, m, number_of_mines = False, int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
+    flags, (game_board, reference_board, mines_list) = 0, init_game(n, m, number_of_mines)
     while not win:
-        game, pos_x, pos_y = parse_input(n, m)
+        flags, bombes, (game, pos_x, pos_y) = 0, 0, parse_input(n, m)
         if game == 'c':
             propagate_click(game_board, reference_board, pos_x, pos_y)
-        elif game == 'f':
+        else:
             reference_board[pos_y][pos_x], game_board[pos_y][pos_x] = 'F', 'F'
-        print_board(game_board)
-        win1 = check_win(game_board, reference_board, mines_list, number_of_flags(game_board))
-        bombes = len(mines_list)
-        for i in game_board:
+        for i in reference_board:
             for j in i:
                 if j == 'X':
-                    bombes -= 1
-                win2 = bombes == 0
-        win = win2 or win1
-        if win2:
-            print("Bravo vous avez gagné !")
-        else:
-            for i, j in mines_list:
-                game_board[i][j] = reference_board[i][j]
+                    bombes += 1
+                if j == 'F':
+                    flags += 1
+        win = check_win(game_board, reference_board, mines_list, flags) or bombes == len(mines_list)
+        if not win:
             print_board(game_board)
+    if check_win(game_board, reference_board, mines_list, flags):
+        print(print_board(game_board), "Bravo vous avez gagné !", sep='\n')
+    else:
+        for i, j in mines_list:
+            game_board[i][j] = reference_board[i][j]
+        print_board(game_board)
 
 
 main()
