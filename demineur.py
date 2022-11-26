@@ -150,11 +150,13 @@ def main():
         if not win:
             print_board(game_board)
     if check_win(game_board, reference_board, mines_list, flags):
-        print(print_board(game_board), "Bravo vous avez gagné !", sep='\n')
+        print_board(game_board)
+        print("Bravo vous avez gagné !")
     else:
         for i, j in mines_list:
             game_board[i][j] = reference_board[i][j]
         print_board(game_board)
+        print("Dommage, vous avez perdu.")
 
 
 if __name__ == '__main__':
