@@ -81,9 +81,10 @@ def fill_in_board(reference_board):
 
 def propagate_click(game_board, reference_board, pos_x, pos_y):
     res, zero, (x, y) = True, True, get_size(game_board)
-    game_board[pos_y][pos_x] = reference_board[pos_y][pos_x]
+    if game_board[pos_y][pos_x] == '.':
+        game_board[pos_y][pos_x] = reference_board[pos_y][pos_x]
     for i, j in get_neighbors(game_board, pos_x, pos_y):
-        if reference_board[j][i] != 0:
+        if reference_board[j][i] != '0':
             zero = False
         if reference_board[j][i] != 'X':
             res = False
