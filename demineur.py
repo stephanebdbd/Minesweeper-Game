@@ -1,3 +1,9 @@
+"""
+Prenom : Stéphane
+Nom : Badi Budu
+Matricule : 569 082
+"""
+
 from random import *
 import sys
 
@@ -7,8 +13,7 @@ def create_board(n, m):
 
 
 def print_board(board):
-    x, y = get_size(board)
-    implem = len(str(x - 1))
+    implem, (x, y) = len(str(len(board[0]) - 1)), get_size(board)
     for i in range(1 - len(str(x - 1)), 1):
         ligne = str(' ' * (2 * (10 * (-i)) + implem + 2))
         for j in range(10 * (-i), x):
@@ -114,8 +119,7 @@ def check_win(game_board, reference_board, mines_list, total_flags):
 def init_game(n, m, number_of_mines):
     game_board, reference_board = create_board(n, m), create_board(n, m)
     print_board(game_board)
-    first_pos_y = int(input())
-    first_pos_x = int(input())
+    first_pos_y, first_pos_x = int(input()), int(input())
     mines_list = place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y)
     for i, j in mines_list:
         reference_board[j][i] = 'X'
