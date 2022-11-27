@@ -81,13 +81,13 @@ def propagate_click(game_board, reference_board, pos_x, pos_y):
     if reference_board[pos_y][pos_x] == '0':
         for i, j in get_neighbors(reference_board, pos_x, pos_y):
             game_board[j][i] = reference_board[j][i]
-        if pos_x - 1 >= 0 and reference_board[pos_y][pos_x - 1] == '0':
+        if pos_x - 1 >= 0:
             propagate_click(game_board, reference_board, pos_x - 1, pos_y)
-        if pos_x + 1 < x and reference_board[pos_y][pos_x + 1] == '0':
+        if pos_x + 1 < x:
             propagate_click(game_board, reference_board, pos_x + 1, pos_y)
-        if pos_y - 1 >= 0 and reference_board[pos_y - 1][pos_x] == '0':
+        if pos_y - 1 >= 0:
             propagate_click(game_board, reference_board, pos_x, pos_y - 1)
-        if pos_y + 1 < y and reference_board[pos_y + 1][pos_x] == '0':
+        if pos_y + 1 < y:
             propagate_click(game_board, reference_board, pos_x, pos_y + 1)
 
 
