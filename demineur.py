@@ -135,8 +135,8 @@ def main():
                     flags += 1
                 if game_board[j][i] == 'X':
                     bombes += 1
-            if not (check_win(game_board, reference_board, mines_list, flags) or bombes == 0):
-                print_board(game_board)
+        if not (check_win(game_board, reference_board, mines_list, flags) or bombes == 0):
+            print_board(game_board)
     if not (check_win(game_board, reference_board, mines_list, flags) or bombes == 0):
         print_board(game_board)
     else:
