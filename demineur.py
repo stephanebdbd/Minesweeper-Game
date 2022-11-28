@@ -76,7 +76,7 @@ def propagate_click(game_board, reference_board, pos_x, pos_y):
                 game_board[j][i] = reference_board[j][i]
             if reference_board[j][i] == '0':
                 for k, l in get_neighbors(game_board, i, j):
-                    if (i, j) != (k, l) != (pos_x, pos_y) and (k, l) not in zero:
+                    if (i, j) != (k, l) != (pos_x, pos_y) and (k, l) not in zero and game_board[l][k] == '.':
                         zero.append((k, l))
         if len(zero) > 0:
             for i, j in zero:
@@ -100,6 +100,7 @@ def check_win(game_board, reference_board, mines_list, total_flags):
                 if game_board[j][i] == 'X':
                     for k, l in mines_list:
                         game_board[l][k] = 'X'
+                        print("Dommage, c'est perdu.")
                     return True
         return total_flags == 0
     else:
@@ -130,6 +131,12 @@ def main():
             game_board[pos_y][pos_x] = 'F'
         win = check_win(game_board, reference_board, mines_list, sum([i.count('F') for i in game_board]))
         print_board(game_board)
+    for i, j in mines_list:
+        if game_board[j][i] == 'X':
+            win = False
+    if win:
+        print("Bravo, vous avez gagné !")
+    return 1 if win else 0
 
 
 if __name__ == '__main__':
