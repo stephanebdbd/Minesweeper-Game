@@ -103,12 +103,17 @@ def parse_input(n, m):
 
 
 def check_win(game_board, reference_board, mines_list, total_flags):
-    hide = 0
+    hide, lost = 0, False
     for i in range(len(game_board)):
         for j in range(len(game_board[0])):
             if reference_board[j][i] == 'X' and game_board[j][i] != 'X':
                 hide += 1
-    return total_flags == len(mines_list) or hide == len(mines_list)
+            if game_board[j][i] == 'X':
+                lost = True
+                for k, l in mines_list:
+                    game_board[l][k] = 'X'
+                print_board(game_board)
+    return total_flags == len(mines_list) or hide == len(mines_list) or lost
 
 
 def init_game(n, m, number_of_mines):
@@ -138,13 +143,6 @@ def main():
         for i, j in mines_list:
             if game_board[j][i] == 'F':
                 flags += 1
-        if not (check_win(game_board, reference_board, mines_list, flags)):
-            print_board(game_board)
-    if not (check_win(game_board, reference_board, mines_list, flags)):
-        print_board(game_board)
-    else:
-        for i, j in mines_list:
-            game_board[j][i] = 'X'
         print_board(game_board)
 
 
