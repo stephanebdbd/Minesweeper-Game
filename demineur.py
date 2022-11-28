@@ -48,8 +48,7 @@ def get_neighbors(board, pos_x, pos_y):
 
 
 def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
-    voisins, bombes = get_neighbors(reference_board, first_pos_x, first_pos_y), 0
-    (x, y), res = get_size(reference_board), []
+    voisins, bombes, (x, y), res = get_neighbors(reference_board, first_pos_x, first_pos_y), 0, get_size(reference_board), []
     while bombes != number_of_mines:
         abs_x, ord_y = randint(0, x - 1), randint(0, y - 1)
         if (abs_x, ord_y) not in voisins and (abs_x, ord_y) != (first_pos_x, first_pos_y):
@@ -68,38 +67,43 @@ def fill_in_board(reference_board):
 
 
 def propagate_click(game_board, reference_board, pos_x, pos_y):
+    zero = []
     if game_board[pos_y][pos_x] == '.':
         game_board[pos_y][pos_x] = reference_board[pos_y][pos_x]
     if reference_board[pos_y][pos_x] == '0':
-        for i, j in get_neighbors(reference_board, pos_x, pos_y):
-            game_board[j][i] = reference_board[j][i]
-            if reference_board[j][i] == '0' and '.' in get_neighbors(game_board, i, j):
+        for i, j in get_neighbors(game_board, pos_x, pos_y):
+            if game_board[j][i] == '.':
+                game_board[j][i] = reference_board[j][i]
+            if reference_board[j][i] == '0':
+                for k, l in get_neighbors(game_board, i, j):
+                    if (i, j) != (k, l) != (pos_x, pos_y) and (k, l) not in zero:
+                        zero.append((k, l))
+        if len(zero) > 0:
+            for i, j in zero:
                 propagate_click(game_board, reference_board, i, j)
 
 
 def parse_input(n, m):
-    choix, action, case = str(input("Choix d'une case : ")), '', []
-    choix, pos_x, pos_y = choix.strip(), 0, 0
-    if choix[0] in ['c', 'f']:
-        action, case = choix[0], choix[1:].strip().split()
-        if len(case) == 2 and case[0].isdigit() and case[1].isdigit():
-            if n > int(case[0]) >= 0 <= int(case[1]) < m:
-                pos_x, pos_y = int(case[0]), int(case[1])
-                return [action, pos_x, pos_y]
+    choix = str(input("Choix d'une case : "))
+    if choix.strip()[0] in ['c', 'f']:
+        action, pos_x, pos_y = choix.strip()[0], int(choix[1:].strip().split()[0]), int(choix[1:].strip().split()[1])
+        if n > pos_x >= 0 <= pos_y < m:
+            return [action, pos_x, pos_y]
 
 
 def check_win(game_board, reference_board, mines_list, total_flags):
-    hide = 0
-    for i in range(len(game_board)):
-        for j in range(len(game_board[0])):
-            if reference_board[j][i] == 'X' and game_board[j][i] != 'X':
-                hide += 1
-            if game_board[j][i] == 'X':
-                for k, l in mines_list:
-                    game_board[l][k] = 'X'
-                print_board(game_board)
-                return True
-    return total_flags == len(mines_list) or hide == len(mines_list)
+    if len(mines_list) == total_flags:
+        for i in range(len(game_board)):
+            for j in range(len(game_board[0])):
+                if reference_board[j][i] == 'X' and game_board[j][i] == 'F':
+                    total_flags -= 1
+                if game_board[j][i] == 'X':
+                    for k, l in mines_list:
+                        game_board[l][k] = 'X'
+                    return True
+        return total_flags == 0
+    else:
+        return False
 
 
 def init_game(n, m, number_of_mines):
@@ -108,8 +112,6 @@ def init_game(n, m, number_of_mines):
     case = str(input('Choix de la première case : '))
     first_pos_y, first_pos_x = int(case.strip().split()[0]), int(case.strip().split()[1])
     mines_list = place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y)
-    for i, j in mines_list:
-        reference_board[j][i] = 'X'
     reference_board[first_pos_y][first_pos_x], game_board[first_pos_y][first_pos_x] = '0', '0'
     fill_in_board(reference_board)
     propagate_click(game_board, reference_board, first_pos_x, first_pos_y)
@@ -118,19 +120,16 @@ def init_game(n, m, number_of_mines):
 
 
 def main():
-    flags, n, m, number_of_mines = 0, int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
-    game_board, reference_board, mines_list = init_game(n, m, number_of_mines)
-    while not (check_win(game_board, reference_board, mines_list, flags)):
-        flags, (action, pos_x, pos_y) = 0, parse_input(n, m)
+    n, m, number_of_mines = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
+    (game_board, reference_board, mines_list), win = init_game(n, m, number_of_mines), False
+    while not win:
+        action, pos_x, pos_y = parse_input(n, m)
         if action == 'c':
             propagate_click(game_board, reference_board, pos_x, pos_y)
         else:
             game_board[pos_y][pos_x] = 'F'
-        for i, j in mines_list:
-            if game_board[j][i] == 'F':
-                flags += 1
-        if not (check_win(game_board, reference_board, mines_list, flags)):
-            print_board(game_board)
+        win = check_win(game_board, reference_board, mines_list, sum([i.count('F') for i in game_board]))
+        print_board(game_board)
 
 
 if __name__ == '__main__':
