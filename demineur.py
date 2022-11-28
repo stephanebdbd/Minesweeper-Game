@@ -1,9 +1,3 @@
-"""
-Prenom : Stéphane
-Nom : Badi Budu
-Matricule : 569 082
-"""
-
 from random import *
 import sys
 
@@ -69,26 +63,18 @@ def fill_in_board(reference_board):
     for i in range(len(reference_board)):
         for j in range(len(reference_board[0])):
             if reference_board[j][i] == '.':
-                liste, number = get_neighbors(reference_board, i, j), 0
-                for k, l in liste:
-                    if reference_board[l][k] == 'X':
-                        number += 1
-                reference_board[j][i] = str(number)
+                valeurs = [reference_board[l][k] for k, l in get_neighbors(reference_board, i, j)]
+                reference_board[j][i] = str(valeurs.count('X'))
 
 
 def propagate_click(game_board, reference_board, pos_x, pos_y):
-    (x, y), game_board[pos_y][pos_x] = get_size(game_board), reference_board[pos_y][pos_x]
+    if game_board[pos_y][pos_x] == '.':
+        game_board[pos_y][pos_x] = reference_board[pos_y][pos_x]
     if reference_board[pos_y][pos_x] == '0':
         for i, j in get_neighbors(reference_board, pos_x, pos_y):
             game_board[j][i] = reference_board[j][i]
-        if pos_x - 1 >= 0 and reference_board[pos_x - 1][pos_y] in get_neighbors(reference_board, pos_x, pos_y):
-            propagate_click(game_board, reference_board, pos_x - 1, pos_y)
-        if pos_x + 1 < x and reference_board[pos_x + 1][pos_y] in get_neighbors(reference_board, pos_x, pos_y):
-            propagate_click(game_board, reference_board, pos_x + 1, pos_y)
-        if pos_y - 1 >= 0 and reference_board[pos_x][pos_y - 1] in get_neighbors(reference_board, pos_x, pos_y):
-            propagate_click(game_board, reference_board, pos_x, pos_y - 1)
-        if pos_y + 1 < y and reference_board[pos_x][pos_y + 1] in get_neighbors(reference_board, pos_x, pos_y):
-            propagate_click(game_board, reference_board, pos_x, pos_y + 1)
+            if reference_board[j][i] == '0' and '.' in get_neighbors(game_board, i, j):
+                propagate_click(game_board, reference_board, i, j)
 
 
 def parse_input(n, m):
@@ -103,17 +89,17 @@ def parse_input(n, m):
 
 
 def check_win(game_board, reference_board, mines_list, total_flags):
-    hide, lost = 0, False
+    hide = 0
     for i in range(len(game_board)):
         for j in range(len(game_board[0])):
             if reference_board[j][i] == 'X' and game_board[j][i] != 'X':
                 hide += 1
             if game_board[j][i] == 'X':
-                lost = True
                 for k, l in mines_list:
                     game_board[l][k] = 'X'
                 print_board(game_board)
-    return total_flags == len(mines_list) or hide == len(mines_list) or lost
+                return True
+    return total_flags == len(mines_list) or hide == len(mines_list)
 
 
 def init_game(n, m, number_of_mines):
@@ -143,7 +129,8 @@ def main():
         for i, j in mines_list:
             if game_board[j][i] == 'F':
                 flags += 1
-        print_board(game_board)
+        if not (check_win(game_board, reference_board, mines_list, flags)):
+            print_board(game_board)
 
 
 if __name__ == '__main__':
