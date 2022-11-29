@@ -45,7 +45,7 @@ def get_neighbors(board, pos_x, pos_y):
 def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
     voisins, bombes, (x, y) = get_neighbors(reference_board, first_pos_x, first_pos_y), [], get_size(reference_board)
     while len(bombes) != number_of_mines:
-        [abs_x, ord_y] = [randint(0, x - 1), randint(0, y - 1)]
+        abs_x, ord_y = randint(0, x - 1), randint(0, y - 1)
         if [abs_x, ord_y] not in bombes and [abs_x, ord_y] not in voisins and [abs_x, ord_y] != [first_pos_x, first_pos_y]:
             reference_board[ord_y][abs_x] = 'X'
             bombes.append([abs_x, ord_y])
