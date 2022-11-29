@@ -119,6 +119,7 @@ def init_game(n, m, number_of_mines):
 
 def main():
     n, m, number_of_mines = int(argv[1]), int(argv[2]), int(argv[3])
+    setrecursionlimit(n * m)
     (game_board, reference_board, mines_list), win = init_game(n, m, number_of_mines), True
     while not check_win(game_board, reference_board, mines_list, sum([1 for j, i in mines_list if game_board[i][j] == 'F'])):
         action, pos_x, pos_y = parse_input(n, m)
