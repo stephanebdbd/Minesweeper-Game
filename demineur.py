@@ -1,3 +1,10 @@
+"""
+Prenom : Stéphane
+Nom : Badi Budu
+Matricule : 569 082
+
+"""
+
 from random import *
 from sys import *
 
@@ -36,14 +43,13 @@ def get_neighbors(board, pos_x, pos_y):
 
 
 def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
-    voisins, bombes, (x, y), res = 0, get_size(reference_board), [], get_neighbors(reference_board, first_pos_x, first_pos_y)
-    while bombes != number_of_mines:
+    voisins, bombes, (x, y) = get_neighbors(reference_board, first_pos_x, first_pos_y), [], get_size(reference_board)
+    while len(bombes) != number_of_mines:
         abs_x, ord_y = randint(0, x - 1), randint(0, y - 1)
         if (abs_x, ord_y) not in voisins and (abs_x, ord_y) != (first_pos_x, first_pos_y):
             reference_board[ord_y][abs_x] = 'X'
-            res.append((abs_x, ord_y))
-            bombes += 1
-    return res
+            bombes.append((abs_x, ord_y))
+    return bombes
 
 
 def fill_in_board(reference_board):
@@ -55,13 +61,11 @@ def fill_in_board(reference_board):
 
 
 def propagate_click(game_board, reference_board, pos_x, pos_y):
-    if game_board[pos_y][pos_x] != reference_board[pos_y][pos_x]:
-        game_board[pos_y][pos_x] = reference_board[pos_y][pos_x]
+    game_board[pos_y][pos_x] = reference_board[pos_y][pos_x]
     if reference_board[pos_y][pos_x] == '0':
         zero = []
         for i, j in get_neighbors(game_board, pos_x, pos_y):
-            if game_board[j][i] != reference_board[j][i]:
-                game_board[j][i] = reference_board[j][i]
+            game_board[j][i] = reference_board[j][i]
             if game_board[j][i] == '0':
                 for k, l in get_neighbors(game_board, i, j):
                     if (i, j) != (k, l) != (pos_x, pos_y) and (k, l) not in zero and game_board[l][k] != reference_board[l][k]:
@@ -122,7 +126,10 @@ def main():
         if game_board[j][i] == 'X':
             win = False
     print_board(game_board)
-    return 1 if win else 0
+    if win:
+        print("Bravo, vous avez gagné !")
+    else:
+        print("Dommage, c'est perdu.")
 
 
 if __name__ == '__main__':
