@@ -1,19 +1,33 @@
 """
+Jeu démineur
 Prenom : Stéphane
 Nom : Badi Budu
 Matricule : 569 082
-
+Petit jeu à jouer dans le terminal qui
+Date : 29 novembre 2022
+Entrée : la longueur, la largeur du tableau, le nombre de mines,
+         ensuite on clique sur les cases.
+Sorties : le tableau du jeu actualisé
 """
-
+# Import de modules
 from random import *
 from sys import *
 
 
+# Définition de fonctions
 def create_board(n, m):
+    """
+    Fonction qui crée une matrice pour le tableau du jeu de dimension n x m
+    Entrée : les dimensions n et m du tableau
+    Sortie : matrice de listes de strings (list[list[str]])
+    """
     return [['.' for _ in range(n)] for _ in range(m)]
 
 
 def print_board(board):
+    """
+    Affiche le plateau de
+    """
     implem, (x, y) = len(str(len(board[0]) - 1)), get_size(board)
     for i in range(1 - len(str(x - 1)), 1):
         ligne = str(' ' * (2 * (10 * (-i)) + implem + 2))
@@ -90,7 +104,7 @@ def parse_input(n, m):
 
 
 def check_win(game_board, reference_board, mines_list, total_flags):
-    hide, (x, y) = 0, get_size(game_board)
+    flag, hide, (x, y) = total_flags, 0, get_size(game_board)
     for i in range(y):
         for j in range(x):
             if game_board[i][j] == 'X':
@@ -98,11 +112,14 @@ def check_win(game_board, reference_board, mines_list, total_flags):
                     if game_board[l][k] != 'F':
                         game_board[l][k] = reference_board[l][k]
                 return True
-            elif game_board[i][j] in ['F', '.'] and reference_board[i][j] == 'X':
+            if game_board[i][j] == '.':
                 hide += 1
-            elif game_board[i][j] == '.':
+            if game_board[i][j] == 'F' and reference_board[i][j] == 'X':
                 total_flags -= 1
-    return hide == len(mines_list) and total_flags == 0
+    if flag > 0:
+        return hide == len(mines_list) or total_flags == 0
+    else:
+        return hide == len(mines_list)
 
 
 def init_game(n, m, number_of_mines):
@@ -121,6 +138,9 @@ def init_game(n, m, number_of_mines):
 
 
 def main():
+    """
+    Fonction principale du jeu qui co
+    """
     game = []
     if len(argv) == 4:
         for i in argv:
@@ -144,5 +164,6 @@ def main():
                 print("Dommage, c'est perdu.")
 
 
-if __name__ == '__main__':
-    main()
+# Code Principal
+if __name__ == '__main__':  # test conditionnel
+    main()  # appel à la fonction principale du jeu
