@@ -128,12 +128,11 @@ def main():
             propagate_click(game_board, reference_board, pos_x, pos_y)
         else:
             game_board[pos_y][pos_x] = 'F'
-        if not check_win(game_board, reference_board, mines_list, sum([1 for j, i in mines_list if game_board[i][j] == 'F'])):
-            print_board(game_board)
+        check_win(game_board, reference_board, mines_list, sum([1 for j, i in mines_list if game_board[i][j] == 'F']))
+        print_board(game_board)
     for i, j in mines_list:
         if game_board[j][i] == 'X':
             win = False
-    print_board(game_board)
     if win:
         print("Bravo, vous avez gagné !")
     else:
