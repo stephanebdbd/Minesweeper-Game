@@ -98,7 +98,8 @@ def check_win(game_board, reference_board, mines_list, total_flags):
                 return True
             elif game_board[i][j] in ['.', 'F']:
                 hide += 1
-    return hide == len(mines_list) or total_flags == len(mines_list)
+                total_flags -= 1
+    return hide == len(mines_list) or total_flags == 0
 
 
 def init_game(n, m, number_of_mines):
