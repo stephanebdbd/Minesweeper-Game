@@ -50,9 +50,10 @@ def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
     voisins, bombes, (x, y) = get_neighbors(reference_board, first_pos_x, first_pos_y), [], get_size(reference_board)
     while len(bombes) != number_of_mines:
         abs_x, ord_y = randint(0, x - 1), randint(0, y - 1)
-        if [abs_x, ord_y] not in bombes and [abs_x, ord_y] not in voisins and [abs_x, ord_y] != [first_pos_x, first_pos_y]:
+        case = [abs_x, ord_y]
+        if case not in bombes and case not in voisins and case != [first_pos_x, first_pos_y]:
             reference_board[ord_y][abs_x] = 'X'
-            bombes.append([abs_x, ord_y])
+            bombes.append(case)
     return bombes
 
 
@@ -80,9 +81,9 @@ def propagate_click(game_board, reference_board, pos_x, pos_y):
 
 
 def parse_input(n, m):
-    choix = str(input("Choix d'une case : ")).strip().split()
-    if len(choix) == 3 and choix[0] in ['c', 'f'] and choix[1].isdigit() and choix[2].isdigit() and n > int(choix[1]) >= 0 <= int(choix[2]) < m:
-        action, pos_y, pos_x = choix[0], int(choix[1]), int(choix[2])
+    jeu = str(input("Choix d'une case : ")).strip().split()
+    if len(jeu) == 3 and jeu[0] in ['c', 'f'] and jeu[1].isdigit() and jeu[2].isdigit() and n > int(jeu[1]) >= 0 <= int(jeu[2]) < m:
+        action, pos_y, pos_x = jeu[0], int(jeu[1]), int(jeu[2])
     else:
         action, pos_y, pos_x = parse_input(n, m)
     return [action, pos_x, pos_y]
@@ -120,24 +121,27 @@ def init_game(n, m, number_of_mines):
 
 
 def main():
-    n, m, number_of_mines = int(argv[1]), int(argv[2]), int(argv[3])
-    setrecursionlimit(n * m)
-    (game_board, reference_board, mines_list), win = init_game(n, m, number_of_mines), True
-    while not check_win(game_board, reference_board, mines_list, sum([1 for j, i in mines_list if game_board[i][j] == 'F'])):
-        action, pos_x, pos_y = parse_input(n, m)
-        if action == 'c':
-            propagate_click(game_board, reference_board, pos_x, pos_y)
-        else:
-            game_board[pos_y][pos_x] = 'F'
-        check_win(game_board, reference_board, mines_list, sum([1 for j, i in mines_list if game_board[i][j] == 'F']))
-        print_board(game_board)
-    for i, j in mines_list:
-        if game_board[j][i] == 'X':
-            win = False
-    if win:
-        print("Bravo, vous avez gagné !")
-    else:
-        print("Dommage, c'est perdu.")
+    game = []
+    if len(argv) == 4:
+        for i in argv:
+            if i.isdigit():
+                game.append(int(i))
+        if len(game) == 3:
+            n, m, number_of_mines = game
+            setrecursionlimit(n * m)
+            (game_board, reference_board, mines_list) = init_game(n, m, number_of_mines)
+            while not check_win(game_board, reference_board, mines_list, sum([1 for j, i in mines_list if game_board[i][j] == 'F'])):
+                action, pos_x, pos_y = parse_input(n, m)
+                if action == 'c':
+                    propagate_click(game_board, reference_board, pos_x, pos_y)
+                else:
+                    game_board[pos_y][pos_x] = 'F'
+                check_win(game_board, reference_board, mines_list, sum([1 for j, i in mines_list if game_board[i][j] == 'F']))
+                print_board(game_board)
+            if sum([1 for j, i in mines_list if game_board[i][j] == 'X']) == 0:
+                print("Bravo, vous avez gagné !")
+            else:
+                print("Dommage, c'est perdu.")
 
 
 if __name__ == '__main__':
