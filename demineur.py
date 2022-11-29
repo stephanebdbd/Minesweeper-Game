@@ -97,10 +97,11 @@ def check_win(game_board, reference_board, mines_list, total_flags):
                     if game_board[l][k] != 'F':
                         game_board[l][k] = reference_board[l][k]
                 return True
-            elif game_board[i][j] in ['.', 'F']:
+            elif game_board[i][j] in ['F', '.'] and reference_board[i][j] == 'X':
                 hide += 1
+            elif game_board[i][j] == '.':
                 total_flags -= 1
-    return hide == len(mines_list) or total_flags == 0
+    return hide == len(mines_list) and total_flags == 0
 
 
 def init_game(n, m, number_of_mines):
