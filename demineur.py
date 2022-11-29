@@ -85,6 +85,7 @@ def parse_input(n, m):
 
 
 def check_win(game_board, reference_board, mines_list, total_flags):
+    hide = 0
     if total_flags == len(mines_list):
         return True
     else:
@@ -93,7 +94,9 @@ def check_win(game_board, reference_board, mines_list, total_flags):
                 for k, l in mines_list:
                     game_board[l][k] = reference_board[l][k]
                 return True
-        return False
+            else:
+                hide += 1
+        return hide == len(mines_list)
 
 
 def init_game(n, m, number_of_mines):
