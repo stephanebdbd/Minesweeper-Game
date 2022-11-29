@@ -24,6 +24,10 @@ def print_board(board):
     for i in range(y):
         ligne = ''
         for j in board[i]:
+            if j == 'X':
+                j = u"\u001b[31mX\u001b[0m"
+            elif j == 'F':
+                j = u"\u001b[32mF\u001b[0m"
             ligne += str(j) + ' '
         print(' ' * (implem - len(str(i))) + str(i) + ' | ' + str(ligne) + '|')
     print((implem + 1) * ' ' + ((2 * x) + 3) * '_')
@@ -38,7 +42,7 @@ def get_neighbors(board, pos_x, pos_y):
     for i in range(-1, 2):
         for j in range(-1, 2):
             if x > pos_x + j >= 0 <= pos_y + i < y and (i != 0 or j != 0):
-                res.append((pos_x + j, pos_y + i))
+                res.append([pos_x + j, pos_y + i])
     return res
 
 
@@ -46,7 +50,7 @@ def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
     voisins, bombes, (x, y) = get_neighbors(reference_board, first_pos_x, first_pos_y), [], get_size(reference_board)
     while len(bombes) != number_of_mines:
         abs_x, ord_y = randint(0, x - 1), randint(0, y - 1)
-        if [abs_x, ord_y] not in bombes and [abs_x, ord_y] not in voisins and [abs_x, ord_y] != [first_pos_x, first_pos_y]:
+        if [abs_x, ord_y] not in (bombes and voisins) and [abs_x, ord_y] != [first_pos_x, first_pos_y]:
             reference_board[ord_y][abs_x] = 'X'
             bombes.append([abs_x, ord_y])
     return bombes
@@ -94,7 +98,7 @@ def check_win(game_board, reference_board, mines_list, total_flags):
                 return True
             elif game_board[i][j] in ['.', 'F']:
                 hide += 1
-    return hide == len(mines_list) and total_flags == len(mines_list)
+    return hide == len(mines_list) or total_flags == len(mines_list)
 
 
 def init_game(n, m, number_of_mines):
