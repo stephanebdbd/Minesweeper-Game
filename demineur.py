@@ -1,3 +1,10 @@
+"""
+Prenom : Stéphane
+Nom : Badi Budu
+Matricule : 569 082
+
+"""
+
 from random import *
 from sys import *
 
