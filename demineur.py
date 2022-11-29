@@ -94,7 +94,8 @@ def check_win(game_board, reference_board, mines_list, total_flags):
         for j in range(x):
             if game_board[i][j] == 'X':
                 for k, l in mines_list:
-                    game_board[l][k] = reference_board[l][k]
+                    if game_board[l][k] != 'F':
+                        game_board[l][k] = reference_board[l][k]
                 return True
             elif game_board[i][j] in ['.', 'F']:
                 hide += 1
