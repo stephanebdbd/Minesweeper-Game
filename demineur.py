@@ -151,31 +151,29 @@ def init_game(n, m, number_of_mines):
     fill_in_board(reference_board)
     propagate_click(game_board, reference_board, first_pos_x, first_pos_y)
     print_board(game_board)
-    if isinstance(game_board, list) and isinstance(reference_board, list) and isinstance(mines_list, list):
-        return game_board, reference_board, mines_list
+    return game_board, reference_board, mines_list
 
 
 def main():
     """
     Fonction principale du jeu qui contrôle le jeu
     """
-    if isinstance(sys.argv, list) and len(sys.argv) == 4:
-        if sys.argv[3].isdigit() and sys.argv[1].isdigit() and sys.argv[2].isdigit():
-            n, m, number_of_mines = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
-            sys.setrecursionlimit(n * m)
-            game_board, reference_board, mines_list = init_game(n, m, number_of_mines)
-            while not check_win(game_board, reference_board, mines_list, sum(1 for i, j in mines_list if game_board[i][j] == 'F')):
-                action, pos_x, pos_y = parse_input(n, m)
-                if action == 'c':
-                    propagate_click(game_board, reference_board, pos_x, pos_y)
-                elif action == 'f':
-                    game_board[pos_y][pos_x] = 'F'
-                check_win(game_board, reference_board, mines_list, sum(1 for i, j in mines_list if game_board[i][j] == 'F'))
-                print_board(game_board)
-            if sum(1 for i, j in mines_list if game_board[i][j] == 'X') == 0:
-                print("Bravo, vous avez gagné !")
-            else:
-                print("Dommage, vous avez perdu.")
+    if len(sys.argv) == 4 and sys.argv[3].isdigit() and sys.argv[1].isdigit() and sys.argv[2].isdigit():
+        n, m, number_of_mines = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
+        sys.setrecursionlimit(n * m)
+        game_board, reference_board, mines_list = init_game(n, m, number_of_mines)
+        while not check_win(game_board, reference_board, mines_list, sum(1 for i, j in mines_list if game_board[i][j] == 'F')):
+            action, pos_x, pos_y = parse_input(n, m)
+            if action == 'c':
+                propagate_click(game_board, reference_board, pos_x, pos_y)
+            elif action == 'f':
+                game_board[pos_y][pos_x] = 'F'
+            check_win(game_board, reference_board, mines_list, sum(1 for i, j in mines_list if game_board[i][j] == 'F'))
+            print_board(game_board)
+        if sum(1 for i, j in mines_list if game_board[i][j] == 'X') == 0:
+            print("Bravo, vous avez gagné !")
+        else:
+            print("Dommage, vous avez perdu.")
 
 
 if __name__ == '__main__':  # test conditionnel
