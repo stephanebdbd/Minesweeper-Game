@@ -9,6 +9,7 @@ Date : 29 novembre 2022.
 Entrée : la longueur et la largeur du tableau, le nombre de mines et on clique sur les cases.
 Sorties : le tableau du jeu actualisé.
 """
+
 # Import de modules
 from random import *
 import sys
