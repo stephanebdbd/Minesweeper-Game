@@ -1,34 +1,12 @@
-"""
-Jeu démineur
-Prenom : Stéphane
-Nom : Badi Budu
-Matricule : 569 082
-Petit jeu à jouer dans le terminal qui consiste à trouver les mines du
-plateau de jeu, ou à dévoiler toutes les cases sans tomber sur une mine
-Date : 29 novembre 2022.
-Entrée : la longueur et la largeur du tableau, le nombre de mines et on clique sur les cases.
-Sorties : le tableau du jeu actualisé.
-"""
-# Import de modules
 from random import *
 import sys
 
 
-# Définition de fonctions
 def create_board(n, m):
-    """
-    Fonction qui crée une matrice pour le tableau du jeu de dimension n x m.
-    Entrée : les dimensions n et m du tableau.
-    Sortie : matrice de listes de strings (list[list[str]]).
-    """
-    return [['.' for _ in range(m)] for _ in range(n)]  # On retourne la matrice
+    return [['.' for _ in range(m)] for _ in range(n)]
 
 
 def print_board(board):
-    """
-    Affiche le plateau de jeu
-    Entrée : le board/tableau du jeu (list[list[str]]).
-    """
     implem, (n, m) = len(str(len(board[0]) - 1)), get_size(board)
     for i in range(1 - len(str(m - 1)), 1):
         ligne = str(' ' * (2 * (10 * (-i)) + implem + 2))
@@ -49,20 +27,10 @@ def print_board(board):
 
 
 def get_size(board):
-    """
-    Retourne les dimensions du tableau/plateau de jeu.
-    Entrée : le board/tableau du jeu (list[list[str]]).
-    Sortie : Tuple des dimensions données au début n x m (Tuple[int,int]).
-    """
-    return len(board), len(board[0])  # On retourne les dimensions de la matrice crée au début du jeu
+    return len(board), len(board[0])
 
 
 def get_neighbors(board, pos_x, pos_y):
-    """
-    Fonction qui retourne une liste des coordonnées des cases qui entourent celle du paramètre.
-    Entrée : la matrice du plateau de jeu (list), les coordonnées n et m (int) de la case choisie.
-    Sortie : liste de tuples qui sont les coordonnées des cases voisines (List[Tuple[int,int]]).
-    """
     (n, m), res = get_size(board), []
     for i in range(-1, 2):
         for j in range(-1, 2):
@@ -72,12 +40,6 @@ def get_neighbors(board, pos_x, pos_y):
 
 
 def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
-    """
-    Fonction qui place aléatoirement les mines du jeu dans le tableau de référence.
-    Entrée : la matrice du tableau de jeu référent (List[Tuple[int,int]]),
-    le nombre de mines et les coordonnées n et m de la première case choisie (int).
-    Sortie : liste des coordonnées des cases où ont été placées les mines (List[Tuple[int,int]]).
-    """
     voisins, bombes, (n, m) = get_neighbors(reference_board, first_pos_x, first_pos_y), [], get_size(reference_board)
     while len(bombes) != number_of_mines:
         ord_y, abs_x = randint(0, n - 1), randint(0, m - 1)
@@ -88,11 +50,6 @@ def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
 
 
 def fill_in_board(reference_board):
-    """
-    Fonction qui remplit la matrice du tableau de jeu référent en comptant le nombre de mines autour
-    de la case (exemple : si la case vaut 3, ça veut dire qu'il y a 3 mines autour de la case).
-    Entrée : la matrice du tableau de jeu référent (List[Tuple[int,int]]).
-    """
     for i in range(len(reference_board)):
         for j in range(len(reference_board[0])):
             if reference_board[i][j] == '.':
@@ -149,32 +106,27 @@ def init_game(n, m, number_of_mines):
     fill_in_board(reference_board)
     propagate_click(game_board, reference_board, first_pos_x, first_pos_y)
     print_board(game_board)
-    if isinstance(game_board, list) and isinstance(reference_board, list) and isinstance(mines_list, list):
-        return game_board, reference_board, mines_list
+    return game_board, reference_board, mines_list
 
 
 def main():
-    """
-    Fonction principale du jeu qui contrôle le jeu
-    """
-    if isinstance(sys.argv, list) and len(sys.argv) == 4:
-        if sys.argv[3].isdigit() and sys.argv[1].isdigit() and sys.argv[2].isdigit():
-            n, m, number_of_mines = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
-            sys.setrecursionlimit(n * m)
-            game_board, reference_board, mines_list = init_game(n, m, number_of_mines)
-            while not check_win(game_board, reference_board, mines_list, sum(1 for i, j in mines_list if game_board[i][j] == 'F')):
-                action, pos_x, pos_y = parse_input(n, m)
-                if action == 'c':
-                    propagate_click(game_board, reference_board, pos_x, pos_y)
-                elif action == 'f':
-                    game_board[pos_y][pos_x] = 'F'
-                check_win(game_board, reference_board, mines_list, sum(1 for i, j in mines_list if game_board[i][j] == 'F'))
-                print_board(game_board)
-            if sum(1 for i, j in mines_list if game_board[i][j] == 'X') == 0:
-                print("Bravo, vous avez gagné !")
-            else:
-                print("Dommage, vous avez perdu.")
+    if len(sys.argv) == 4 and sys.argv[3].isdigit() and sys.argv[1].isdigit() and sys.argv[2].isdigit():
+        n, m, number_of_mines = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
+        sys.setrecursionlimit(n * m)
+        game_board, reference_board, mines_list = init_game(n, m, number_of_mines)
+        while not check_win(game_board, reference_board, mines_list, sum(1 for i, j in mines_list if game_board[i][j] == 'F')):
+            action, pos_x, pos_y = parse_input(n, m)
+            if action == 'c':
+                propagate_click(game_board, reference_board, pos_x, pos_y)
+            elif action == 'f':
+                game_board[pos_y][pos_x] = 'F'
+            check_win(game_board, reference_board, mines_list, sum(1 for i, j in mines_list if game_board[i][j] == 'F'))
+            print_board(game_board)
+        if sum(1 for i, j in mines_list if game_board[i][j] == 'X') == 0:
+            print("Bravo, vous avez gagné !")
+        else:
+            print("Dommage, vous avez perdu.")
 
 
-if __name__ == '__main__':  # test conditionnel
-    main()  # appel à la fonction principale du jeu
+if __name__ == '__main__':
+    main()
