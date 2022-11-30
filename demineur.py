@@ -27,7 +27,7 @@ def create_board(n, m):
 def print_board(board):
     """
     Affiche le plateau de jeu
-    Entrée : le board/tableau du jeu (list[list[str]])..
+    Entrée : le board/tableau du jeu (list[list[str]]).
     """
     implem, (n, m) = len(str(len(board[0]) - 1)), get_size(board)
     for i in range(1 - len(str(m - 1)), 1):
@@ -81,8 +81,7 @@ def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
     voisins, bombes, (n, m) = get_neighbors(reference_board, first_pos_x, first_pos_y), [], get_size(reference_board)
     while len(bombes) != number_of_mines:
         ord_y, abs_x = randint(0, n - 1), randint(0, m - 1)
-        case = [abs_x, ord_y]
-        if [ord_y, abs_x] not in bombes and case not in voisins and case != [first_pos_x, first_pos_y]:
+        if [ord_y, abs_x] not in bombes and [abs_x, ord_y] not in voisins and [abs_x, ord_y] != [first_pos_x, first_pos_y]:
             reference_board[ord_y][abs_x] = 'X'
             bombes.append([ord_y, abs_x])
     return bombes
@@ -97,8 +96,7 @@ def fill_in_board(reference_board):
     for i in range(len(reference_board)):
         for j in range(len(reference_board[0])):
             if reference_board[i][j] == '.':
-                valeurs = [reference_board[l][k] for k, l in get_neighbors(reference_board, j, i)]
-                reference_board[i][j] = str(valeurs.count('X'))
+                reference_board[i][j] = str(sum(1 for k, l in get_neighbors(reference_board, j, i) if reference_board[l][k] == 'X'))
 
 
 def propagate_click(game_board, reference_board, pos_x, pos_y):
@@ -121,8 +119,8 @@ def propagate_click(game_board, reference_board, pos_x, pos_y):
 def parse_input(n, m):
     jeu = str(input("Choix d'une case : ")).strip().split()
     if len(jeu) == 3 and jeu[0].isalpha() and jeu[1].isdigit() and jeu[2].isdigit() and m > int(jeu[1]) >= 0 <= int(jeu[2]) < n:
-        action, pos_y, pos_x = jeu[0].lower(), int(jeu[1]), int(jeu[2])
-        return [action, pos_x, pos_y]
+        return [jeu[0].lower(), int(jeu[2]), int(jeu[1])]
+    return parse_input(n, m)
 
 
 def check_win(game_board, reference_board, mines_list, total_flags):
@@ -131,63 +129,54 @@ def check_win(game_board, reference_board, mines_list, total_flags):
         for j in range(m):
             if game_board[i][j] == 'X':
                 for k, l in mines_list:
-                    if game_board[l][k] != 'F':
-                        game_board[l][k] = reference_board[l][k]
+                    if game_board[k][l] != 'F':
+                        game_board[k][l] = reference_board[k][l]
                 return True
-            if game_board[i][j] == '.':
+            if game_board[i][j] in ['.', 'F']:
                 hide += 1
             if game_board[i][j] == 'F' and reference_board[i][j] == 'X':
                 total_flags -= 1
     if flag == len(mines_list):
-        return total_flags == 0
-    return hide == len(mines_list) or flag - total_flags + hide == len(mines_list)
+        return hide == len(mines_list) or total_flags == 0
+    return hide == len(mines_list)
 
 
 def init_game(n, m, number_of_mines):
     game_board, reference_board = create_board(n, m), create_board(n, m)
     print_board(game_board)
     game = parse_input(n, m)
-    if type(game) == list and len(game) == 3:
-        action, first_pos_x, first_pos_y = game
-        mines_list = place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y)
-        reference_board[first_pos_y][first_pos_x], game_board[first_pos_y][first_pos_x] = '0', '0'
-        fill_in_board(reference_board)
-        propagate_click(game_board, reference_board, first_pos_x, first_pos_y)
-        print_board(game_board)
-        if isinstance(game_board, list) and isinstance(reference_board, list) and isinstance(mines_list, list):
-            return game_board, reference_board, mines_list
+    action, first_pos_x, first_pos_y = game
+    mines_list = place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y)
+    reference_board[first_pos_y][first_pos_x], game_board[first_pos_y][first_pos_x] = '0', '0'
+    fill_in_board(reference_board)
+    propagate_click(game_board, reference_board, first_pos_x, first_pos_y)
+    print_board(game_board)
+    if isinstance(game_board, list) and isinstance(reference_board, list) and isinstance(mines_list, list):
+        return game_board, reference_board, mines_list
 
 
 def main():
     """
     Fonction principale du jeu qui contrôle le jeu
     """
-    if sys.argv[1].isdigit() and sys.argv[2].isdigit() and sys.argv[3].isdigit():
-        n, m, number_of_mines = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
-        sys.setrecursionlimit(n * m)
-        start = init_game(n, m, number_of_mines)
-        if isinstance(start, tuple) and len(start) == 3:
-            game_board, reference_board, mines_list = start
+    if isinstance(sys.argv, list) and len(sys.argv) == 4:
+        if sys.argv[3].isdigit() and sys.argv[1].isdigit() and sys.argv[2].isdigit():
+            n, m, number_of_mines = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
+            sys.setrecursionlimit(n * m)
+            game_board, reference_board, mines_list = init_game(n, m, number_of_mines)
             while not check_win(game_board, reference_board, mines_list, sum(1 for i, j in mines_list if game_board[i][j] == 'F')):
-                game = parse_input(n, m)
-                if isinstance(game, list) and len(game) == 3:
-                    action, pos_x, pos_y = game
-                    if action == 'c':
-                        propagate_click(game_board, reference_board, pos_x, pos_y)
-                    elif action == 'f':
-                        game_board[pos_y][pos_x] = 'F'
-                    check_win(game_board, reference_board, mines_list, sum(1 for i, j in mines_list if game_board[i][j] == 'F'))
-                    print_board(game_board)
-                else:
-                    print("Dommage, c'est perdu.")
+                action, pos_x, pos_y = parse_input(n, m)
+                if action == 'c':
+                    propagate_click(game_board, reference_board, pos_x, pos_y)
+                elif action == 'f':
+                    game_board[pos_y][pos_x] = 'F'
+                check_win(game_board, reference_board, mines_list, sum(1 for i, j in mines_list if game_board[i][j] == 'F'))
+                print_board(game_board)
             if sum(1 for i, j in mines_list if game_board[i][j] == 'X') == 0:
                 print("Bravo, vous avez gagné !")
             else:
-                print("Dommage, c'est perdu.")
-    else:
-        print("Dommage, c'est perdu.")
+                print("Dommage, vous avez perdu.")
 
 
-# Code Principal
 if __name__ == '__main__':  # test conditionnel
     main()  # appel à la fonction principale du jeu
