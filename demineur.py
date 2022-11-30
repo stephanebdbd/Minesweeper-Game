@@ -176,6 +176,5 @@ def main():
             else:
                 print("Dommage, vous avez perdu.")
 
-
 if __name__ == '__main__':  # test conditionnel
     main()  # appel à la fonction principale du jeu
