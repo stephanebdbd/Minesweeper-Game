@@ -157,6 +157,7 @@ def main():
     """
     Fonction principale du jeu qui contrôle le jeu
     """
+
     if isinstance(sys.argv, list) and len(sys.argv) == 4:
         if sys.argv[3].isdigit() and sys.argv[1].isdigit() and sys.argv[2].isdigit():
             n, m, number_of_mines = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
