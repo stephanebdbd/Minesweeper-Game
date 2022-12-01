@@ -1,54 +1,56 @@
 """
-Jeu démineur
-Prenom : Stéphane
-Nom : Badi Budu
-Matricule : 569 082
+Jeu démineur.
+Prenom : Stéphane.
+Nom : Badi Budu.
+Matricule : 569 082.
 Petit jeu à jouer dans le terminal qui consiste à trouver les mines du
-plateau de jeu, ou à dévoiler toutes les cases sans tomber sur une mine
+plateau de jeu, ou à dévoiler toutes les cases sans tomber sur une mine.
 Date : 29 novembre 2022.
 Entrée : la longueur et la largeur du tableau, le nombre de mines et on clique sur les cases.
 Sorties : le tableau du jeu actualisé.
 """
 
-# Import de modules
-from random import *
+# Import de modules.
+from random import *  # Module random pour choisir les mines aléatoirement.
 import sys
+# Module sys pour récupérer les valeurs entrées au début du jeu et pour augmenter la limite récursive en fonction des dimensions du tableau de jeu.
 
 
-# Définition de fonctions
+# Définition de fonctions.
 def create_board(n, m):
     """
     Fonction qui crée une matrice pour le tableau du jeu de dimension n x m.
     Entrée : les dimensions n et m du tableau.
     Sortie : matrice de listes de strings (list[list[str]]).
     """
-    return [['.' for _ in range(m)] for _ in range(n)]  # On retourne la matrice
+    return [['.' for _ in range(m)] for _ in range(n)]  # On retourne la matrice.
 
 
 def print_board(board):
     """
-    Affiche le plateau de jeu
+    Affiche le plateau de jeu.
     Entrée : le board/tableau du jeu (list[list[str]]).
     """
-    implem, (n, m) = len(str(len(board[0]) - 1)), get_size(board)
-    for i in range(1 - len(str(m - 1)), 1):
-        ligne = str(' ' * (2 * (10 * (-i)) + implem + 2))
-        for j in range(10 * (-i), m):
-            ligne += ' ' + str(j)[len(str(j)) - 1 + i]
-        print(ligne)
-    print((implem + 1) * ' ' + ((2 * m) + 3) * '_')
-    for i in range(n):
+    implem, (n, m) = len(str(len(board[0]) - 1)), get_size(board)  # Variable implem pour la longueur de l'implémentation.
+    # n et m, les dimensions du tableau.
+    for i in range(1 - len(str(m - 1)), 1):  # Boucle pour écrire les chiffres au-dessus du tableau.
+        ligne = ''  # Variable pour l'écriture de la ligne
+        for j in range(10 * (-i), m):  # Boucle pour décaler l'écriture de 10 places pour le chiffre de dizaine des dizaines.
+            ligne += ' ' + str(j)[len(str(j)) - 1 + i]  # On ajoute progressivement les chiffres dans la variable de la ligne.
+        print(' ' * (2 * (10 * (-i)) + implem + 2) + ligne)  # On imprime la ligne.
+    print((implem + 1) * ' ' + ((2 * m) + 3) * '_')  # On trace une ligne pour séparer le tableau des chiffres.
+    for i in range(n):  # On crée une boucle de la dimension n pour écrire les lignes et les chiffres de l'ordonnée n.
         ligne = ''
-        for j in board[i]:
+        for j in board[i]:  # Seconde boucle pour sortir les valeurs du board.
             if j == 'X':
-                j = u"\u001b[31mX\u001b[0m"
+                j = u"\u001b[31mX\u001b[0m"  # Si la valeur est une mine, elle devient rouge.
             elif j == 'F':
-                j = u"\u001b[32mF\u001b[0m"
+                j = u"\u001b[32mF\u001b[0m"  # Si la valeur est un flag sur une mine, elle devient verte.
             elif j == 'Fx':
-                j = u"\u001b[31mF\u001b[0m"
-            ligne += str(j) + ' '
-        print(' ' * (implem - len(str(i))) + str(i) + ' | ' + str(ligne) + '|')
-    print((implem + 1) * ' ' + ((2 * m) + 3) * '_')
+                j = u"\u001b[31mF\u001b[0m"  # Si la valeur est un flag qui n'est pas sur une mine, elle devient rouge.
+            ligne += str(j) + ' '  # On ajoute à la ligne, la ligne des valeurs.
+        print(' ' * (implem - len(str(i))) + str(i) + ' | ' + str(ligne) + '|')  # On imprime la ligne.
+    print((implem + 1) * ' ' + ((2 * m) + 3) * '_')  # On trace une ligne en dessous du tableau pour le fermer
 
 
 def get_size(board):
@@ -66,12 +68,12 @@ def get_neighbors(board, pos_x, pos_y):
     Entrée : la matrice du plateau de jeu (list), les coordonnées n et m (int) de la case choisie.
     Sortie : liste de tuples qui sont les coordonnées des cases voisines (List[Tuple[int,int]]).
     """
-    (n, m), res = get_size(board), []
-    for i in range(-1, 2):
+    (n, m), voisins = get_size(board), []  # Variable des dimensions n et m du tableau et liste des coordonnées des voisins.
+    for i in range(-1, 2):  # 2 boucles allant de -1 à +1 pour déterminer les cases qui entourent la case choisie.
         for j in range(-1, 2):
-            if m > pos_x + j >= 0 <= pos_y + i < n and (i != 0 or j != 0):
-                res.append([pos_x + j, pos_y + i])
-    return res
+            if m > pos_x + j >= 0 <= pos_y + i < n and (i != 0 or j != 0):  # On regarde si c'est une case du board et ce n'est pas la case choisie.
+                voisins.append([pos_x + j, pos_y + i])  # On ajoute les coordonnées des cases voisines dans la liste "voisins".
+    return voisins  # On retourne la liste "voisins".
 
 
 def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
@@ -81,13 +83,15 @@ def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
     le nombre de mines et les coordonnées n et m de la première case choisie (int).
     Sortie : liste des coordonnées des cases où ont été placées les mines (List[Tuple[int,int]]).
     """
-    voisins, bombes, (n, m) = get_neighbors(reference_board, first_pos_x, first_pos_y), [], get_size(reference_board)
-    while len(bombes) != number_of_mines:
-        ord_y, abs_x = randint(0, n - 1), randint(0, m - 1)
-        if [ord_y, abs_x] not in bombes and [abs_x, ord_y] not in voisins and [abs_x, ord_y] != [first_pos_x, first_pos_y]:
-            reference_board[ord_y][abs_x] = 'X'
-            bombes.append([ord_y, abs_x])
-    return bombes
+    voisins, mines_list, (n, m) = get_neighbors(reference_board, first_pos_x, first_pos_y), [], get_size(reference_board)
+    # Liste des voisins de la première case choisie, une liste pour y ajouter les mines du tableau et les dimensions n et m du tableau.
+    while len(mines_list) != number_of_mines:  # Tant qu'il n'y a pas autant de mines dans la liste que le nombre de mines choisi,
+        ord_y, abs_x = randint(0, n - 1), randint(0, m - 1)  # On va déterminer une coordonnée de mine de manière aléatoire.
+        if [ord_y, abs_x] not in mines_list and [abs_x, ord_y] not in voisins and [abs_x, ord_y] != [first_pos_x, first_pos_y]:
+            # On regarde si la mine fait déjà partie de la liste des mines, des voisins de la première case et que ce n'est pas la première case.
+            reference_board[ord_y][abs_x] = 'X'  # On place la mine dans sa case au tableau de jeu référent.
+            mines_list.append([ord_y, abs_x])  # On ajoute les coordonnées de la mine en question dans la liste des mines.
+    return mines_list  # On retourne la liste des mines.
 
 
 def fill_in_board(reference_board):
@@ -96,10 +100,11 @@ def fill_in_board(reference_board):
     de la case (exemple : si la case vaut 3, ça veut dire qu'il y a 3 mines autour de la case).
     Entrée : la matrice du tableau de jeu référent (List[Tuple[int,int]]).
     """
-    for i in range(len(reference_board)):
+    for i in range(len(reference_board)):  # On crée 2 boucles pour examiner les différentes cases du tableau référent.
         for j in range(len(reference_board[0])):
-            if reference_board[i][j] == '.':
+            if reference_board[i][j] == '.':  # Si la case est vide,
                 reference_board[i][j] = str(sum(1 for k, l in get_neighbors(reference_board, j, i) if reference_board[l][k] == 'X'))
+                # La case indiquera le nombre de mines qui se trouvent autour d'elle.
 
 
 def propagate_click(game_board, reference_board, pos_x, pos_y):
@@ -118,10 +123,16 @@ def propagate_click(game_board, reference_board, pos_x, pos_y):
 
 
 def parse_input(n, m):
-    jeu = str(input("Choix d'une case : ")).strip().split()
+    """
+    Permet d'entrer une chaine de caractère qui indique l'action que demande l'utilisateur par rapport à la case choisie
+    Entrée : les dimensions n et m du tableau (int).
+    Sortie : L'action choisie (str), et les coordonnées de la case choisie (int) le tout dans un tuple (Tuple[str, int, int]).
+    """
+    jeu = str(input("Choix d'une case : ")).strip().split()  # On transforme en une liste les données entrées par personnage.
     if len(jeu) == 3 and jeu[0] in 'CcFf' and jeu[1].isdigit() and jeu[2].isdigit() and m > int(jeu[1]) >= 0 <= int(jeu[2]) < n:
-        return [jeu[0].lower(), int(jeu[2]), int(jeu[1])]
-    return parse_input(n, m)
+        # S'il y a bien 3 éléments dans la liste qui correspondent bien aux actions déterminées et aux coordonnées qui sont dans le tableau,
+        return [jeu[0].lower(), int(jeu[2]), int(jeu[1])]  # On retourne le tuple de données
+    return parse_input(n, m)  # Sinon on rappelle la même fonction "parse_input" tant que l'utilisateur n'aura pas entré des données valables.
 
 
 def check_win(game_board, reference_board, mines_list, total_flags):
@@ -186,5 +197,6 @@ def main():
                 print("Dommage, vous avez perdu.")
 
 
+# Code principal.
 if __name__ == '__main__':  # test conditionnel
     main()  # appel à la fonction principale du jeu
