@@ -12,8 +12,7 @@ Sorties : le tableau du jeu actualisé.
 
 # Import de modules.
 from random import *  # Module random pour choisir les mines aléatoirement.
-import sys
-# Module sys pour récupérer les valeurs entrées au début du jeu et pour augmenter la limite récursive en fonction des dimensions du tableau de jeu.
+import sys  # Module sys pour récupérer les valeurs entrées au début du jeu et pour augmenter la limite récursive de la fonction "propagate click".
 
 
 # Définition de fonctions.
