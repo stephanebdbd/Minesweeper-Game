@@ -39,7 +39,7 @@ def print_board(board):
         print(' ' * (2 * (10 * (-i)) + implem + 2) + ligne)  # On imprime la ligne.
     print((implem + 1) * ' ' + ((2 * m) + 3) * '_')  # On trace une ligne pour séparer le plateau des chiffres.
     for i in range(n):  # On crée une boucle de la dimension n pour écrire les lignes et les chiffres de l'ordonnée n.
-        ligne = ''
+        ligne = ''  # Variable pour l'écriture de la ligne
         for j in board[i]:  # Seconde boucle pour sortir les valeurs du board.
             if j == 'X':  # Si la valeur est une mine,
                 j = u"\u001b[31mX\u001b[0m"  # elle devient rouge.
