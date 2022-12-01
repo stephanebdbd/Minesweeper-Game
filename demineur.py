@@ -198,5 +198,5 @@ def main():
 
 
 # Code principal.
-if __name__ == '__main__':  # test conditionnel
+if __name__ == '__main__':  # import du fichier via test conditionnel
     main()  # appel à la fonction principale du jeu
