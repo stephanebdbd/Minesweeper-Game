@@ -99,8 +99,7 @@ def fill_in_board(reference_board):
     for i in range(len(reference_board)):
         for j in range(len(reference_board[0])):
             if reference_board[i][j] == '.':
-                reference_board[i][j] = str(
-                    sum(1 for k, l in get_neighbors(reference_board, j, i) if reference_board[l][k] == 'X'))
+                reference_board[i][j] = str(sum(1 for k, l in get_neighbors(reference_board, j, i) if reference_board[l][k] == 'X'))
 
 
 def propagate_click(game_board, reference_board, pos_x, pos_y):
@@ -120,7 +119,7 @@ def propagate_click(game_board, reference_board, pos_x, pos_y):
 
 def parse_input(n, m):
     jeu = str(input("Choix d'une case : ")).strip().split()
-    if len(jeu) == 3 and jeu[0] == 'c' and jeu[1].isdigit() and jeu[2].isdigit() and m > int(jeu[1]) >= 0 <= int(jeu[2]) < n:
+    if len(jeu) == 3 and jeu[0] in 'CcFf' and jeu[1].isdigit() and jeu[2].isdigit() and m > int(jeu[1]) >= 0 <= int(jeu[2]) < n:
         return [jeu[0].lower(), int(jeu[2]), int(jeu[1])]
     return parse_input(n, m)
 
@@ -137,7 +136,7 @@ def check_win(game_board, reference_board, mines_list, total_flags):
                         if game_board[o][p] == 'F' and reference_board[o][p] != 'X':
                             game_board[o][p] = 'Fx'
                 return True
-            if game_board[i][j] in ['.', 'F']:
+            if game_board[i][j] in '.F':
                 hide += 1
             if game_board[i][j] == 'F' and reference_board[i][j] == 'X':
                 total_flags -= 1
