@@ -19,7 +19,7 @@ import sys
 # Définition de fonctions.
 def create_board(n, m):
     """
-    Fonction qui crée une matrice pour le tableau du jeu de dimension n x m.
+    Fonction qui crée une matrice pour les plateaux du jeu de dimension n x m.
     Entrée : les dimensions n et m du tableau.
     Sortie : matrice de listes de strings (list[list[str]]).
     """
@@ -29,7 +29,7 @@ def create_board(n, m):
 def print_board(board):
     """
     Affiche le plateau de jeu.
-    Entrée : le board/tableau du jeu (list[list[str]]).
+    Entrée : un plateau (list[list[str]]).
     """
     implem, (n, m) = len(str(len(board[0]) - 1)), get_size(board)  # Variable implem pour la longueur de l'implémentation.
     # n et m, les dimensions du tableau.
@@ -56,7 +56,7 @@ def print_board(board):
 def get_size(board):
     """
     Retourne les dimensions du tableau/plateau de jeu.
-    Entrée : le board/tableau du jeu (list[list[str]]).
+    Entrée : un des 2 plateaux (list[list[str]]).
     Sortie : Tuple des dimensions données au début n x m (Tuple[int,int]).
     """
     return len(board), len(board[0])  # On retourne les dimensions de la matrice crée au début du jeu
@@ -65,7 +65,7 @@ def get_size(board):
 def get_neighbors(board, pos_x, pos_y):
     """
     Fonction qui retourne une liste des coordonnées des cases qui entourent celle du paramètre.
-    Entrée : la matrice du plateau de jeu (list), les coordonnées n et m (int) de la case choisie.
+    Entrée : la matrice d'un des plateaux (list), les coordonnées n et m (int) de la case choisie.
     Sortie : liste de tuples qui sont les coordonnées des cases voisines (List[Tuple[int,int]]).
     """
     (n, m), voisins = get_size(board), []  # Variable des dimensions n et m du tableau et liste des coordonnées des voisins.
@@ -79,7 +79,7 @@ def get_neighbors(board, pos_x, pos_y):
 def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
     """
     Fonction qui place aléatoirement les mines du jeu dans le tableau de référence.
-    Entrée : la matrice du tableau de jeu référent (List[Tuple[int,int]]),
+    Entrée : la matrice du plateau référent (List[Tuple[int,int]]),
     le nombre de mines et les coordonnées n et m de la première case choisie (int).
     Sortie : liste des coordonnées des cases où ont été placées les mines (List[Tuple[int,int]]).
     """
@@ -96,9 +96,9 @@ def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
 
 def fill_in_board(reference_board):
     """
-    Fonction qui remplit la matrice du tableau de jeu référent en comptant le nombre de mines autour
-    de la case (exemple : si la case vaut 3, ça veut dire qu'il y a 3 mines autour de la case).
-    Entrée : la matrice du tableau de jeu référent (List[Tuple[int,int]]).
+    Fonction qui remplit la matrice du tableau de jeu référent en indiquant
+    le nombre de mines autour de chaque case.
+    Entrée : la matrice du plateau référent (List[Tuple[int,int]]).
     """
     for i in range(len(reference_board)):  # On crée 2 boucles pour examiner les différentes cases du tableau référent.
         for j in range(len(reference_board[0])):
@@ -108,25 +108,32 @@ def fill_in_board(reference_board):
 
 
 def propagate_click(game_board, reference_board, pos_x, pos_y):
-    if game_board[pos_y][pos_x] != 'F':
-        game_board[pos_y][pos_x], zero = reference_board[pos_y][pos_x], []
-        if reference_board[pos_y][pos_x] == '0':
-            for i, j in get_neighbors(game_board, pos_x, pos_y):
-                if game_board[j][i] != 'F':
-                    game_board[j][i] = reference_board[j][i]
-                if game_board[j][i] == '0':
-                    for k, l in get_neighbors(game_board, i, j):
+    """
+    Fonction qui dévoile les cases voisines de celles qui sont révélées si dans les deux cas elles valent 0.
+    Entrée : les matrices des plateaux référents et de jeu (List[List[str]])
+             et la position x et la position y de la case traitée (int).
+    """
+    if game_board[pos_y][pos_x] != 'F':  # On vérifie que la case ne soit pas un flag.
+        game_board[pos_y][pos_x], zero = reference_board[pos_y][pos_x], []  # On actualise le tableau de jeu.
+        # Création d'une liste qui va contenir les coordonnées des cases qui valent 0 si la case traitée vaut aussi 0.
+        if reference_board[pos_y][pos_x] == '0':  # Si la case traitée vaut 0,
+            for i, j in get_neighbors(game_board, pos_x, pos_y):  # On crée une boucle examiner les cases voisines de celle qui est traitée.
+                if game_board[j][i] != 'F':  # Si ce n'est pas un flag,
+                    game_board[j][i] = reference_board[j][i]  # On l'actualise.
+                if game_board[j][i] == '0':  # Si l'une d'entre elles vaut 0,
+                    for k, l in get_neighbors(game_board, i, j):  # On crée une boucle pour examiner toutes les cases qui l'entourent.
                         if (i, j) != (k, l) != (pos_x, pos_y) and (k, l) not in zero and game_board[l][k] != reference_board[l][k]:
-                            zero.append((k, l))
-            for i, j in zero:
-                propagate_click(game_board, reference_board, i, j)
+                            # Si la cases n'est pas dans la liste zero, qu'elle ne correspond à aucune des cases traités plus haut et qu'elle n'a pas encore été révélée,
+                            zero.append((k, l))  # On ajoute les coordonnées de cette case dans la liste zero.
+            for i, j in zero:  # On crée une boucle pour traiter les cases dont les coordonnées sont dans la liste.
+                propagate_click(game_board, reference_board, i, j)  # On applique la récursion à la fonction pour dévoiler les voisins de chacune d'entre elles.
 
 
 def parse_input(n, m):
     """
     Permet d'entrer une chaine de caractère qui indique l'action que demande l'utilisateur par rapport à la case choisie
     Entrée : les dimensions n et m du tableau (int).
-    Sortie : L'action choisie (str), et les coordonnées de la case choisie (int) le tout dans un tuple (Tuple[str, int, int]).
+    Sortie : L'action choisie (str), et la position x et la position y de la case choisie (int) le tout dans un tuple (Tuple[str, int, int]).
     """
     jeu = str(input("Choix d'une case : ")).strip().split()  # On transforme en une liste les données entrées par personnage.
     if len(jeu) == 3 and jeu[0] in 'CcFf' and jeu[1].isdigit() and jeu[2].isdigit() and m > int(jeu[1]) >= 0 <= int(jeu[2]) < n:
@@ -136,24 +143,24 @@ def parse_input(n, m):
 
 
 def check_win(game_board, reference_board, mines_list, total_flags):
-    flag, hide, (n, m) = total_flags, 0, get_size(game_board)
+    """
+    Fonction qui renvoie True si l'utilisateur a gagné, sinon il renvoie False.
+    Entrée : les plateaux de jeu et référents (List[List[str]]), les coordonnées des mines (List[Tuple[int,int]]]) et le nombre de flags (int).
+    """
+    (n, m) = get_size(game_board)
     for i in range(n):
         for j in range(m):
-            if game_board[i][j] == 'X':
+            if game_board[i][j] == 'F' and reference_board[i][j] == 'X':
+                total_flags -= 1
+            elif game_board[i][j] == 'X':
                 for o in range(n):
                     for p in range(m):
                         if game_board[o][p] != 'F' and reference_board[o][p] == 'X':
                             game_board[o][p] = reference_board[o][p]
                         if game_board[o][p] == 'F' and reference_board[o][p] != 'X':
                             game_board[o][p] = 'Fx'
-                return True
-            if game_board[i][j] in '.F':
-                hide += 1
-            if game_board[i][j] == 'F' and reference_board[i][j] == 'X':
-                total_flags -= 1
-    if flag == len(mines_list):
-        return hide == len(mines_list) or total_flags == 0
-    return hide == len(mines_list)
+                return False
+    return sum(1 for i in range(n) for j in range(m) if game_board[i][j] in 'F.') == len(mines_list) or total_flags == 0
 
 
 def init_game(n, m, number_of_mines):
@@ -169,8 +176,7 @@ def init_game(n, m, number_of_mines):
     fill_in_board(reference_board)
     propagate_click(game_board, reference_board, first_pos_x, first_pos_y)
     print_board(game_board)
-    if isinstance(game_board, list) and isinstance(reference_board, list) and isinstance(mines_list, list):
-        return game_board, reference_board, mines_list
+    return game_board, reference_board, mines_list
 
 
 def main():
@@ -181,17 +187,20 @@ def main():
         if int(sys.argv[1]) * int(sys.argv[2]) > int(sys.argv[3]):
             n, m, number_of_mines = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
             sys.setrecursionlimit(n * m)
-            game_board, reference_board, mines_list = init_game(n, m, number_of_mines)
-            while not check_win(game_board, reference_board, mines_list, sum(1 for i, j in mines_list if game_board[i][j] == 'F')):
-                action, pos_x, pos_y = parse_input(n, m)
+            mines, m_flags, flags, hide, (game_board, reference_board, mines_list) = True, 0, 0, 0, init_game(n, m, number_of_mines)
+            while not ((m_flags == flags and hide + flags == number_of_mines) or m_flags == flags == number_of_mines) and mines:
+                (action, pos_x, pos_y), flags = parse_input(n, m), sum(1 for i, j in mines_list if game_board[i][j] == 'F')
                 if action == 'c':
                     game_board[pos_y][pos_x] = reference_board[pos_y][pos_x]
                     propagate_click(game_board, reference_board, pos_x, pos_y)
                 elif action == 'f':
-                    game_board[pos_y][pos_x] = 'F'
-                check_win(game_board, reference_board, mines_list, sum(1 for i, j in mines_list if game_board[i][j] == 'F'))
+                    game_board[pos_y][pos_x], flags = 'F', flags + 1
+                hide = sum(1 for i in range(n) for j in range(m) if game_board[i][j] == '.')
+                m_flags = sum(1 for i, j in mines_list if game_board[i][j] == 'F')
+                mines = sum(1 for i, j in mines_list if game_board[i][j] == 'X') == 0
+                check_win(game_board, reference_board, mines_list, flags)
                 print_board(game_board)
-            if sum(1 for i, j in mines_list if game_board[i][j] == 'X') == 0:
+            if check_win(game_board, reference_board, mines_list, flags):
                 print("Bravo, vous avez gagné !")
             else:
                 print("Dommage, vous avez perdu.")
