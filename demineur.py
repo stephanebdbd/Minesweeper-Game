@@ -110,9 +110,8 @@ def propagate_click(game_board, reference_board, pos_x, pos_y):
     Fonction qui dévoile les cases voisines de celles qui sont révélées si dans les deux cas elles valent 0.
     Entrée : les matrices des plateaux de référence et de jeu (List[List[str]])et les coordonnées n et m de la case traitée (int).
     """
-    if game_board[pos_y][pos_x] != 'F':  # Si la case n'est pas un flag,
-        game_board[pos_y][pos_x], zero = reference_board[pos_y][pos_x], []  # on actualise le plateau de jeu.
-        # Création d'une liste qui va contenir les coordonnées des cases qui valent 0 si la case traitée vaut aussi 0.
+    if game_board[pos_y][pos_x] != 'F':  # Si la case n'est pas un flag, on actualise le plateau de jeu.
+        game_board[pos_y][pos_x], zero = reference_board[pos_y][pos_x], []  # zero : liste contenant les coordonnées des cases qui valent 0 si la case traitée vaut aussi 0.
         if reference_board[pos_y][pos_x] == '0':  # Si la case traitée vaut 0,
             for i, j in get_neighbors(game_board, pos_x, pos_y):  # on crée une boucle examiner les cases voisines de celle qui est traitée.
                 if game_board[j][i] != 'F':  # Si la case n'est pas sous pas un flag,
@@ -195,20 +194,21 @@ def main():
             (game_board, reference_board, mines_list), m_flags, flags, hide = init_game(n, m, number_of_mines), 0, 0, 0  # On initialise le début du jeu et on crée des variables :
             # m_flags : nombre de flags sur des mines, flags : nombre total de flags sur le plateau de jeu, mines : booléen qui indique si une mine est dévoilée.
             game, win, mines = False, check_win(game_board, reference_board, mines_list, flags), True  # win : indique si le joueur a gagné, hide : nombre de cases (hors flags) non dévoilés.
-            while not ((m_flags == flags and hide + flags == number_of_mines) or m_flags == flags == number_of_mines) and mines:
-                # Tant que le joueur n'a pas touché de mines et qu'il n'a pas posé de flags sur les mines ou dévoilé toutes les cases sauf les mines,
-                action, pos_x, pos_y = parse_input(n, m)  # On demande au joueur les données de jeu qu'il veut entrer.
-                if action == 'c':  # Si l'action choisie par le joueur est un 'c',
-                    game_board[pos_y][pos_x] = reference_board[pos_y][pos_x]  # on dévoile la case en avance au cas où c'est un flag.
-                    propagate_click(game_board, reference_board, pos_x, pos_y)  # et on dévoile les cases voisines si la case est un 0.
-                else:  # Si l'action choisie par le joueur est 'f',
-                    game_board[pos_y][pos_x] = 'F'  # on pose un flag sur la case choisie et on ajoute 1 au nombre total de
-                mines = sum(1 for i, j in mines_list if game_board[i][j] == 'X') == 0  # On inspecte si le joueur a choisi de dévoiler une mine.
-                m_flags = sum(1 for i, j in mines_list if game_board[i][j] == 'F')  # On compte le nombre de flags qui sont sur des mines.
-                flags = sum(1 for i, j in mines_list if game_board[i][j] == 'F')  # On compte le nombre de flags sur le plateau de jeu.
-                hide = sum(1 for i in range(n) for j in range(m) if game_board[i][j] == '.')  # On compte le nombre de cases pas encore dévoilées.
-                win = check_win(game_board, reference_board, mines_list, flags)  # On vérifie si le joueur a perdu pour dévoiler toutes les mines.
-                print_board(game_board)  # On dessine le tableau.
+            if not win:  # Si le joueur n'a pas gagné la partie avant qu'elle ne commence,
+                while not ((m_flags == flags and hide + flags == number_of_mines) or m_flags == flags == number_of_mines) and mines:
+                    # Tant que le joueur n'a pas touché de mines et qu'il n'a pas posé de flags sur les mines ou dévoilé toutes les cases sauf les mines,
+                    action, pos_x, pos_y = parse_input(n, m)  # On demande au joueur les données de jeu qu'il veut entrer.
+                    if action == 'c':  # Si l'action choisie par le joueur est un 'c',
+                        game_board[pos_y][pos_x] = reference_board[pos_y][pos_x]  # on dévoile la case en avance au cas où c'est un flag.
+                        propagate_click(game_board, reference_board, pos_x, pos_y)  # et on dévoile les cases voisines si la case est un 0.
+                    else:  # Si l'action choisie par le joueur est 'f',
+                        game_board[pos_y][pos_x] = 'F'  # on pose un flag sur la case choisie et on ajoute 1 au nombre total de
+                    mines = sum(1 for i, j in mines_list if game_board[i][j] == 'X') == 0  # On inspecte si le joueur a choisi de dévoiler une mine.
+                    m_flags = sum(1 for i, j in mines_list if game_board[i][j] == 'F')  # On compte le nombre de flags qui sont sur des mines.
+                    flags = sum(1 for i, j in mines_list if game_board[i][j] == 'F')  # On compte le nombre de flags sur le plateau de jeu.
+                    hide = sum(1 for i in range(n) for j in range(m) if game_board[i][j] == '.')  # On compte le nombre de cases pas encore dévoilées.
+                    win = check_win(game_board, reference_board, mines_list, flags)  # On vérifie si le joueur a perdu pour dévoiler toutes les mines.
+                    print_board(game_board)  # On dessine le tableau.
             if win:  # Si le joueur a gagné,
                 print("Bravo, vous avez gagné !")  # on envoie un message de victoire.
             else:  # Sinon,
