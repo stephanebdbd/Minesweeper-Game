@@ -10,7 +10,6 @@ Entrée : la longueur et la largeur du plateau, le nombre de mines et on clique 
 Sorties : le plateau de jeu.
 """
 
-
 # Import de modules.
 from random import *  # Module random pour choisir les mines aléatoirement.
 import sys  # Module sys pour récupérer les valeurs entrées au début du jeu et pour augmenter la limite récursive de la fonction "propagate click".
