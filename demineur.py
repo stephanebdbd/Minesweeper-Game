@@ -154,7 +154,6 @@ def check_win(game_board, reference_board, mines_list, total_flags):
                             game_board[o][p] = reference_board[o][p]  # on dévoile la case (qui est une mine).
                         elif game_board[o][p] == 'F' and [o, p] not in mines_list:  # S'il y a un flag sur une case qui n'est pas celle d'une mine,
                             game_board[o][p] = 'Fx'  # on colorie ce "flag" en rouge pour spécifier qu'il était mal placé.
-                return False  # On retourne le booléen "False" pour spécifier que le joueur a perdu la partie.
     # L'une de ces conditions sera vraie si le joueur a trouvé les mines :
     win1 = total_flags + sum(1 for i in range(n) for j in range(m) if game_board[i][j] in '.') == len(mines_list)
     win2 = total_flags == len(mines_list) or sum(1 for i in range(n) for j in range(m) if game_board[i][j] in '.') == len(mines_list)
