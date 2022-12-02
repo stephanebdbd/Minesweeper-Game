@@ -188,8 +188,8 @@ def main():
     Fonction principale qui contrôle le jeu en recevant les premières commandes du jeu, c'est-à-dire,
     les dimensions du plateau et le nombre de mines et contient une boucle qui finira à la fin de la partie.
     """
-    if len(sys.argv) == 4 and sys.argv[3].isdigit() and sys.argv[1].isdigit() and sys.argv[2].isdigit() and int(sys.argv[1]) * int(sys.argv[2]) - 8 > int(sys.argv[3]):
-        # Si les 3 valeurs entrées sont bien des chiffres, et si le nombre de mines est inférieur au nombre de cases disponibles moins 9 (1ère case + 8 (nombre de voisins maximal)).
+    if len(sys.argv) == 4 and sys.argv[3].isdigit() and sys.argv[1].isdigit() and sys.argv[2].isdigit() and int(sys.argv[1]) * int(sys.argv[2]) - 8 > int(sys.argv[3]) > 0:
+        # Si les 3 valeurs entrées sont bien des chiffres, et si le nombre de mines (supérieur à 0) est inférieur au nombre de cases disponibles moins 9 (1ère case + 8 (nombre de voisins maximal)).
         n, m, number_of_mines = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])  # création des variables des dimensions n et m et de celui du nombre de mines.
         sys.setrecursionlimit(n * m)  # On détermine la limite de récursion au produit des dimensions n et m.
         (game_board, reference_board, mines_list), m_flags, flags, hide = init_game(n, m, number_of_mines), 0, 0, 0  # On initialise le début du jeu et on crée d'autres variables :
