@@ -192,7 +192,7 @@ def main():
             # win : dit si le joueur a gagné, hide : nombre de cases (hors flags) non dévoilées.
             hide, win = sum(1 for i in range(n) for j in range(m) if game_board[i][j] == '.'), check_win(game_board, reference_board, mines_list, flags)
             if not win:  # Si le joueur n'a pas gagné la partie avant qu'elle ne commence,
-                while not ((m_flags == flags and hide + flags == number_of_mines)) and mines:
+                while not ((m_flags == flags and hide + flags == number_of_mines) or m_flags == flags == number_of_mines) and mines:
                     # Tant que le joueur n'a pas touché de mines et qu'il n'a pas posé de flags sur les mines ou dévoilé toutes les cases sauf les mines,
                     action, pos_x, pos_y = parse_input(n, m)  # On demande au joueur les données de jeu qu'il veut entrer.
                     if action == 'c':  # Si l'action choisie par le joueur est un 'c',
