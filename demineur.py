@@ -14,6 +14,10 @@ Sorties : le plateau de jeu.
 from random import *  # Module random pour choisir les mines aléatoirement.
 import sys  # Module sys pour récupérer les valeurs entrées au début du jeu et pour augmenter la limite récursive en fonction des dimensions du tableau.
 
+# Constantes globales.
+COLORS = ['\u001b[37m', '\u001b[34m', '\u001b[32m', '\u001b[32m', ]
+# Différentes couleurs en fonction des valeurs des cases : blanc -> bleu -> vert -> jaune -> orange
+
 
 # Définition de fonctions.
 def create_board(n, m):
@@ -49,7 +53,7 @@ def print_board(board):
                 j = u"\u001b[31mF\u001b[0m"  # elle devient rouge.
             ligne += str(j) + ' '  # On ajoute à la ligne, la ligne des valeurs.
         print(' ' * (implem - len(str(i))) + str(i) + ' | ' + str(ligne) + '|')  # On imprime la ligne.
-    print((implem + 1) * ' ' + ((2 * m) + 3) * '_')  # On trace une ligne en dessous du plateau pour le fermer
+    print((implem + 1) * ' ' + ((2 * m) + 3) * '_')  # On trace une ligne en dessous du plateau pour le fermer.
 
 
 def get_size(board):
