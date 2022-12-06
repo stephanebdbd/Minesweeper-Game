@@ -14,10 +14,6 @@ Sorties : le plateau de jeu.
 from random import *  # Module random pour choisir les mines aléatoirement.
 import sys  # Module sys pour récupérer les valeurs entrées au début du jeu et pour augmenter la limite récursive en fonction des dimensions du tableau.
 
-# Constantes globales.
-COLORS = ['\u001b[37m', '\u001b[34m', '\u001b[32m', '\u001b[32m', ]
-# Différentes couleurs en fonction des valeurs des cases : blanc -> bleu -> vert -> jaune -> orange
-
 
 # Définition de fonctions.
 def create_board(n, m):
