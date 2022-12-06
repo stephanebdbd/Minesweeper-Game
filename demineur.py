@@ -166,17 +166,17 @@ def init_game(n, m, number_of_mines):
     Sorties : les plateaux du jeu et de référence (List[List[str]]) et la liste des coordonnées des mines (List[Tuple[int,int]]).
     """
     game_board, reference_board = create_board(n, m), create_board(n, m)  # Création des plateaux du jeu et de référence.
-    print_board(game_board)  # On dessine le plateau.
+    print_board(game_board)
     action, first_pos_x, first_pos_y = parse_input(n, m)  # On demande au joueur d'entrer la première case choisie
     while action == 'f':  # Tant que l'action choisie est de mettre un flag (et non de dévoiler une case),
         game_board[first_pos_y][first_pos_x] = 'F'  # on place ce flag à la case choisie,
-        print_board(game_board)  # on imprime le plateau de jeu
+        print_board(game_board)
         action, first_pos_x, first_pos_y = parse_input(n, m)  # et on redemande au joueur d'entrer sa commande.
     mines_list = place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y)  # On place les mines et on récupère la liste des coordonnées de celles-ci.
     reference_board[first_pos_y][first_pos_x], game_board[first_pos_y][first_pos_x] = '0', '0'  # La première case dévoilée est d'office un zéro dans les deux plateaux.
     fill_in_board(reference_board)  # On remplit le plateau de référence.
     propagate_click(game_board, reference_board, first_pos_x, first_pos_y)  # On dévoile les cases voisines de celle qui a été révélée.
-    print_board(game_board)  # On redessine le plateau.
+    print_board(game_board)
     return game_board, reference_board, mines_list  # On retourne les deux plateaux et la liste des coordonnées des mines.
 
 
@@ -209,7 +209,7 @@ def main():
                     # On compte le nombre de flags qui sont sur des mines et le nombre de flags sur le plateau de jeu.
                     hide = sum(1 for i in range(n) for j in range(m) if game_board[i][j] == '.')  # On compte le nombre de cases pas encore dévoilées.
                     win = check_win(game_board, reference_board, mines_list, flags)  # On vérifie si le joueur a perdu pour dévoiler toutes les mines.
-                    print_board(game_board)  # On dessine le tableau.
+                    print_board(game_board)
             if win:  # Si le joueur a gagné,
                 print("Bravo, vous avez gagné !")  # on envoie un message de victoire.
             else:  # Sinon,
