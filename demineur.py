@@ -37,7 +37,7 @@ def print_board(board):
         for j in range(10 * (-i), m):  # Boucle pour décaler l'écriture de 10 places pour le chiffre de dizaine des dizaines.
             ligne += ' ' + str(j)[len(str(j)) - 1 + i]  # On ajoute progressivement les chiffres dans la variable de la ligne.
         print(' ' * (2 * (10 * (-i)) + implem + 2) + ligne)  # On imprime la ligne.
-    print((implem + 1) * ' ' + ((2 * m) + 3) * '_')  # On trace une ligne pour séparer le plateau des chiffres.
+    print((implem + 1) * ' ' + ((2 * m) + 3) * '—')  # On trace une ligne pour séparer le plateau des chiffres.
     for i in range(n):  # On crée une boucle de la dimension n pour écrire les lignes et les chiffres de l'ordonnée n.
         ligne = ''  # Variable pour l'écriture de la ligne
         for j in board[i]:  # Seconde boucle pour sortir les valeurs du board.
@@ -49,7 +49,7 @@ def print_board(board):
                 j = u"\u001b[31mF\u001b[0m"  # elle devient rouge.
             ligne += str(j) + ' '  # On ajoute à la ligne, la ligne des valeurs.
         print(' ' * (implem - len(str(i))) + str(i) + ' | ' + str(ligne) + '|')  # On imprime la ligne.
-    print((implem + 1) * ' ' + ((2 * m) + 3) * '_')  # On trace une ligne en dessous du plateau pour le fermer.
+    print((implem + 1) * ' ' + ((2 * m) + 3) * '—')  # On trace une ligne en dessous du plateau pour le fermer.
 
 
 def get_size(board):
