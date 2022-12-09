@@ -30,8 +30,8 @@ def print_board(board):
     Affiche le plateau de jeu.
     Entrée : un plateau (list[list[str]]).
     """
-    implem, (n, m) = len(str(len(board[0]) - 1)), get_size(board)  # Variable implem pour la longueur de l'implémentation.
-    # n et m, les dimensions du plateau.
+    implem, (n, m), colors = len(str(len(board[0]) - 1)), get_size(board), {'Fx': u"\u001b[31mF\u001b[0m", 'F': u"\u001b[32mF\u001b[0m", 'X': u"\u001b[31mX\u001b[0m"}
+    # implem : longueur de l'implémentation, (n, m) : dimensions du plateau, colors : les mines seront rouges et les flags verts ou rouges (s'il n'est pas sur une mine).
     for i in range(1 - len(str(m - 1)), 1):  # Boucle pour écrire les chiffres au-dessus du plateau.
         ligne = ''  # Variable pour l'écriture de la ligne
         for j in range(10 * (-i), m):  # Boucle pour décaler l'écriture de 10 places pour le chiffre de dizaine des dizaines.
@@ -41,12 +41,8 @@ def print_board(board):
     for i in range(n):  # On crée une boucle de la dimension n pour écrire les lignes et les chiffres de l'ordonnée n.
         ligne = ''  # Variable pour l'écriture de la ligne
         for j in board[i]:  # Seconde boucle pour sortir les valeurs du board.
-            if j == 'X':  # Si la case est une mine,
-                j = u"\u001b[31mX\u001b[0m"  # elle devient rouge.
-            elif j == 'F':  # Si la case est un flag,
-                j = u"\u001b[32mF\u001b[0m"  # elle devient verte.
-            elif j == 'Fx':  # Si la case était un flag qui n'est pas sur une mine,
-                j = u"\u001b[31mF\u001b[0m"  # elle devient rouge.
+            if j in colors:
+                j = colors[j]
             ligne += str(j) + ' '  # On ajoute à la ligne, la ligne des valeurs.
         print(' ' * (implem - len(str(i))) + str(i) + ' | ' + str(ligne) + '|')  # On imprime la ligne.
     print((implem + 1) * ' ' + ((2 * m) + 3) * '—')  # On trace une ligne en dessous du plateau pour le fermer.
