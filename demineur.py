@@ -181,13 +181,13 @@ def main():
         # si le nombre de mines (supérieur à 0) est inférieur au nombre de cases disponibles moins 9 (1ère case + 8 (nombre de voisins maximal)),
         if int(sys.argv[1]) * int(sys.argv[2]) - 8 > int(sys.argv[3]) > 0 and int(sys.argv[1]) <= 100 >= int(sys.argv[2]):  # et si n et m sont inférieurs à 100,
             n, m, number_of_mines = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])  # création des variables des dimensions n et m et de celui du nombre de mines.
-            sys.setrecursionlimit(n * m)  # On détermine la limite de récursion au produit des dimensions n et m.
-            game_board, reference_board, mines_list = init_game(n, m, number_of_mines)  # Initialisation du début du jeu et création de variables :
+            sys.setrecursionlimit(n * m)  # On détermine la limite de récursion au produit des dimensions n et m ci-contre puis on initialise le début du jeu ci-dessous.
+            (game_board, reference_board, mines_list), win = init_game(n, m, number_of_mines), {True: "Bravo, vous avez gagné !", False: "Dommage, vous avez perdu."}
+            # win : dictionnaire qui envoie un message de victoire ou défaite, m_flags : nombre de flags sur des mines, flags : nombre total de flags sur le plateau de jeu.
             m_flags, flags, mines = sum(1 for i, j in mines_list if game_board[i][j] == 'F'), sum(1 for i, j in mines_list if game_board[i][j] == 'F'), True
-            # m_flags : nombre de flags sur des mines, flags : nombre total de flags sur le plateau de jeu, mines : booléen qui indique si une mine est dévoilée,
-            # win : dit si le joueur a gagné, hide : nombre de cases (hors flags) non dévoilées.
-            hide, win = sum(1 for i in range(n) for j in range(m) if game_board[i][j] == '.'), check_win(game_board, reference_board, mines_list, flags)
-            if not win:  # Si le joueur n'a pas gagné la partie avant qu'elle ne commence,
+            # game : dit si le joueur a gagné, mines : booléen qui indique si une mine est dévoilée, hide : nombre de cases (hors flags) non dévoilées.
+            hide, game = sum(1 for i in range(n) for j in range(m) if game_board[i][j] == '.'), check_win(game_board, reference_board, mines_list, flags)
+            if not game:  # Si le joueur n'a pas gagné la partie avant qu'elle ne commence,
                 while not ((m_flags == flags and hide + flags == number_of_mines) or m_flags == flags == number_of_mines) and mines:
                     # Tant que le joueur n'a pas touché de mines et qu'il n'a pas posé de flags sur les mines ou dévoilé toutes les cases sauf les mines,
                     action, pos_x, pos_y = parse_input(n, m)  # On demande au joueur les données de jeu qu'il veut entrer.
@@ -196,16 +196,13 @@ def main():
                         propagate_click(game_board, reference_board, pos_x, pos_y)  # et on dévoile les cases voisines si la case est un 0.
                     else:  # Si l'action choisie par le joueur est 'f',
                         game_board[pos_y][pos_x] = 'F'  # on pose un flag sur la case choisie et on ajoute 1 au nombre total de
-                    mines = sum(1 for i, j in mines_list if game_board[i][j] == 'X') == 0  # On inspecte si le joueur a choisi de dévoiler une mine.
+                    mines, hide = sum(1 for i, j in mines_list if game_board[i][j] == 'X') == 0, sum(1 for i in range(n) for j in range(m) if game_board[i][j] == '.')
+                    # On inspecte si le joueur a choisi de dévoiler une mine et on inspecte si le joueur a choisi de dévoiler une mine et
                     m_flags, flags = sum(1 for i, j in mines_list if game_board[i][j] == 'F'), sum(1 for i, j in mines_list if game_board[i][j] == 'F')
                     # On compte le nombre de flags qui sont sur des mines et le nombre de flags sur le plateau de jeu.
-                    hide = sum(1 for i in range(n) for j in range(m) if game_board[i][j] == '.')  # On compte le nombre de cases pas encore dévoilées.
-                    win = check_win(game_board, reference_board, mines_list, flags)  # On vérifie si le joueur a perdu pour dévoiler toutes les mines.
+                    game = check_win(game_board, reference_board, mines_list, flags)  # On vérifie si le joueur a perdu pour dévoiler toutes les mines.
                     print_board(game_board)
-            if win:  # Si le joueur a gagné,
-                print("Bravo, vous avez gagné !")  # on envoie un message de victoire.
-            else:  # Sinon,
-                print("Dommage, vous avez perdu.")  # on envoie un message de défaite.
+            print(win[game])  # On retourne un message de victoire ou de défaite à l'utilisateur à la fin du jeu.
 
 
 # Code principal.
