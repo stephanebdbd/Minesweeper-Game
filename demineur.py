@@ -63,12 +63,12 @@ def get_neighbors(board, pos_x, pos_y):
     Entrée : la matrice d'un des plateaux (list), les coordonnées n et m (int) de la case choisie.
     Sortie : liste de tuples qui sont les coordonnées des cases voisines (List[Tuple[int,int]]).
     """
-    (n, m), voisins = get_size(board), []  # Variable des dimensions n et m du plateau et liste des coordonnées des voisins.
+    (n, m), neighbors = get_size(board), []  # Variable des dimensions n et m du plateau et liste des coordonnées des voisins de la case choisie.
     for i in range(-1, 2):  # 2 boucles allant de -1 à +1 pour déterminer les cases qui entourent la case choisie.
         for j in range(-1, 2):
             if m > pos_x + j >= 0 <= pos_y + i < n and (i != 0 or j != 0):  # Si c'est une case du board et ce n'est pas la case choisie,
-                voisins.append([pos_x + j, pos_y + i])  # on ajoute les coordonnées des cases voisines dans la liste "voisins".
-    return voisins  # On retourne la liste "voisins".
+                neighbors.append([pos_x + j, pos_y + i])  # on ajoute les coordonnées des cases voisines dans la liste "neighbors".
+    return neighbors  # On retourne la liste "neighbors".
 
 
 def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
@@ -77,11 +77,11 @@ def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
     Entrée : la matrice du plateau de référence (List[Tuple[int,int]]), le nombre de mines et les coordonnées n et m de la première case choisie (int).
     Sortie : liste des coordonnées des cases où ont été placées les mines (List[Tuple[int,int]]).
     """
-    voisins, mines_list, (n, m) = get_neighbors(reference_board, first_pos_x, first_pos_y), [], get_size(reference_board)
+    neighbors, mines_list, (n, m) = get_neighbors(reference_board, first_pos_x, first_pos_y), [], get_size(reference_board)
     # Liste des voisins de la première case choisie, une liste pour y ajouter les mines du plateau et les dimensions n et m du plateau.
     while len(mines_list) != number_of_mines:  # Tant qu'il n'y a pas autant de mines dans la liste que le nombre de mines choisi,
         ord_y, abs_x = randint(0, n - 1), randint(0, m - 1)  # On va déterminer une coordonnée de mine de manière aléatoire.
-        if [ord_y, abs_x] not in mines_list and [abs_x, ord_y] not in voisins and [abs_x, ord_y] != [first_pos_x, first_pos_y]:
+        if [ord_y, abs_x] not in mines_list and [abs_x, ord_y] not in neighbors and [abs_x, ord_y] != [first_pos_x, first_pos_y]:
             # Si la mine fait déjà partie de la liste des mines, des voisins de la première case et que ce n'est pas la première case,
             reference_board[ord_y][abs_x] = 'X'  # on place la mine dans sa case au plateau de jeu de référence
             mines_list.append([ord_y, abs_x])  # et on ajoute les coordonnées de la mine en question dans la liste des mines.
@@ -125,11 +125,11 @@ def parse_input(n, m):
     Entrée : les dimensions n et m du plateau (int).
     Sortie : L'action choisie (str), et la position x et la position y de la case choisie (int) le tout dans un tuple (Tuple[str, int, int]).
     """
-    jeu = str(input("Choix d'une case : ")).strip().split()  # On transforme en une liste les données entrées par personnage.
-    while not (len(jeu) == 3 and jeu[0] in 'CcFf' and jeu[1].isdigit() and jeu[2].isdigit() and m > int(jeu[1]) >= 0 <= int(jeu[2]) < n):
+    game = str(input("Choix d'une case : ")).strip().split()  # On transforme en une liste les données entrées par personnage.
+    while not (len(game) == 3 and game[0] in 'CcFf' and game[1].isdigit() and game[2].isdigit() and m > int(game[1]) >= 0 <= int(game[2]) < n):
         # Tant qu'il y n'y a pas 3 éléments dans la liste qui correspondent bien aux actions déterminées et aux coordonnées qui sont dans le plateau,
-        jeu = str(input("Choix d'une case : ")).strip().split()  # on redemande au joueur d'entrer ses données correctement.
-    return jeu[0].lower(), int(jeu[2]), int(jeu[1])  # on retourne le tuple de données
+        game = str(input("Choix d'une case : ")).strip().split()  # on redemande au joueur d'entrer ses données correctement.
+    return game[0].lower(), int(game[2]), int(game[1])  # on retourne le tuple de données
 
 
 def check_win(game_board, reference_board, mines_list, total_flags):
