@@ -125,10 +125,10 @@ def parse_input(n, m):
     Entrée : les dimensions n et m du plateau (int).
     Sortie : L'action choisie (str), et la position x et la position y de la case choisie (int) le tout dans un tuple (Tuple[str, int, int]).
     """
-    game = str(input("Choix d'une case : ")).strip().split()  # On transforme en une liste les données entrées par personnage.
+    game = str(input("Choix d'une case : ")).split()  # On transforme en une liste les données entrées par personnage.
     while not (len(game) == 3 and game[0] in 'CcFf' and game[1].isdigit() and game[2].isdigit() and m > int(game[1]) >= 0 <= int(game[2]) < n):
         # Tant qu'il y n'y a pas 3 éléments dans la liste qui correspondent bien aux actions déterminées et aux coordonnées qui sont dans le plateau,
-        game = str(input("Choix d'une case : ")).strip().split()  # on redemande au joueur d'entrer ses données correctement.
+        game = str(input("Choix d'une case : ")).split()  # on redemande au joueur d'entrer ses données correctement.
     return game[0].lower(), int(game[2]), int(game[1])  # on retourne le tuple de données
 
 
