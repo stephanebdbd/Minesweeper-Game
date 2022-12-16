@@ -29,7 +29,7 @@ def print_board(board):
     Affiche le plateau de jeu.
     Entrée : un plateau (list[list[str]]).
     """
-    implementation, (n, m), colors = len(str(len(board[0]) - 1)), get_size(board), {'Fx': u"\u001b[31mF\u001b[0m", 'F': u"\u001b[32mF\u001b[0m", 'X': u"\u001b[31mX\u001b[0m"}
+    implementation, (n, m) = len(str(len(board[0]) - 1)), get_size(board)
     for i in range(1 - len(str(m - 1)), 1):  # Boucle pour écrire les chiffres au-dessus du plateau.
         ligne = ''
         for j in range(10 * (-i), m):  # Boucle pour décaler l'écriture de 10 places pour le chiffre de dizaine des dizaines.
@@ -39,8 +39,6 @@ def print_board(board):
     for i in range(n):  # On crée une boucle de la dimension n pour écrire les lignes et les chiffres de l'ordonnée n.
         ligne = ''
         for j in board[i]:  # Seconde boucle pour sortir les valeurs du board.
-            if j in colors:
-                j = colors[j]
             ligne += str(j) + ' '  # On ajoute à la ligne, la ligne des valeurs.
         print(' ' * (implementation - len(str(i))) + str(i) + ' | ' + str(ligne) + '|')  # On imprime la ligne.
     print((implementation + 1) * ' ' + ((2 * m) + 3) * '—')
@@ -138,8 +136,6 @@ def check_win(game_board, reference_board, mines_list, total_flags):
             for j in range(m):
                 if game_board[i][j] != 'F' and [i, j] in mines_list:  # Si la case était vide alors que c'était une mine,
                     game_board[i][j] = reference_board[i][j]  # on dévoile la case (qui est une mine).
-                elif game_board[i][j] == 'F' and [i, j] not in mines_list:  # S'il y a un flag sur une case qui n'est pas celle d'une mine,
-                    game_board[i][j] = 'Fx'  # on colorie ce "flag" en rouge pour spécifier qu'il était mal placé.
     win1 = total_flags + sum(1 for i in range(n) for j in range(m) if game_board[i][j] in '.') == len(mines_list)
     win2 = total_flags == len(mines_list) or sum(1 for i in range(n) for j in range(m) if game_board[i][j] in '.') == len(mines_list)
     return (win1 or win2) and mines  # Le joueur a gagné si toutes les cases ont été dévoilées sauf les mines et/ou si les mines ne sont pas dévoilées ou sous un flag.
