@@ -9,10 +9,9 @@ Date : 1er décembre 2022.
 Entrée : la longueur et la largeur du plateau, le nombre de mines et on clique sur les cases.
 Sorties : le plateau de jeu.
 """
-
 # Import de modules.
-from random import *  # Module random pour choisir les mines aléatoirement.
-import sys  # Module sys pour récupérer les valeurs entrées au début du jeu et pour augmenter la limite récursive en fonction des dimensions du tableau.
+from random import *
+import sys
 
 
 # Définition de fonctions.
@@ -22,7 +21,7 @@ def create_board(n, m):
     Entrée : les dimensions n et m du plateau.
     Sortie : matrice de listes de strings (list[list[str]]).
     """
-    return [['.' for _ in range(m)] for _ in range(n)]  # On retourne la matrice.
+    return [['.' for _ in range(m)] for _ in range(n)]
 
 
 def print_board(board):
@@ -30,22 +29,21 @@ def print_board(board):
     Affiche le plateau de jeu.
     Entrée : un plateau (list[list[str]]).
     """
-    implem, (n, m), colors = len(str(len(board[0]) - 1)), get_size(board), {'Fx': u"\u001b[31mF\u001b[0m", 'F': u"\u001b[32mF\u001b[0m", 'X': u"\u001b[31mX\u001b[0m"}
-    # implem : longueur de l'implémentation, (n, m) : dimensions du plateau, colors : les mines seront rouges et les flags verts ou rouges (s'il n'est pas sur une mine).
+    implementation, (n, m), colors = len(str(len(board[0]) - 1)), get_size(board), {'Fx': u"\u001b[31mF\u001b[0m", 'F': u"\u001b[32mF\u001b[0m", 'X': u"\u001b[31mX\u001b[0m"}
     for i in range(1 - len(str(m - 1)), 1):  # Boucle pour écrire les chiffres au-dessus du plateau.
-        ligne = ''  # Variable pour l'écriture de la ligne
+        ligne = ''
         for j in range(10 * (-i), m):  # Boucle pour décaler l'écriture de 10 places pour le chiffre de dizaine des dizaines.
             ligne += ' ' + str(j)[len(str(j)) - 1 + i]  # On ajoute progressivement les chiffres dans la variable de la ligne.
-        print(' ' * (2 * (10 * (-i)) + implem + 2) + ligne)  # On imprime la ligne.
-    print((implem + 1) * ' ' + ((2 * m) + 3) * '—')  # On trace une ligne pour séparer le plateau des chiffres.
+        print(' ' * (2 * (10 * (-i)) + implementation + 2) + ligne)  # On imprime la ligne.
+    print((implementation + 1) * ' ' + ((2 * m) + 3) * '—')
     for i in range(n):  # On crée une boucle de la dimension n pour écrire les lignes et les chiffres de l'ordonnée n.
-        ligne = ''  # Variable pour l'écriture de la ligne
+        ligne = ''
         for j in board[i]:  # Seconde boucle pour sortir les valeurs du board.
             if j in colors:
                 j = colors[j]
             ligne += str(j) + ' '  # On ajoute à la ligne, la ligne des valeurs.
-        print(' ' * (implem - len(str(i))) + str(i) + ' | ' + str(ligne) + '|')  # On imprime la ligne.
-    print((implem + 1) * ' ' + ((2 * m) + 3) * '—')  # On trace une ligne en dessous du plateau pour le fermer.
+        print(' ' * (implementation - len(str(i))) + str(i) + ' | ' + str(ligne) + '|')  # On imprime la ligne.
+    print((implementation + 1) * ' ' + ((2 * m) + 3) * '—')
 
 
 def get_size(board):
@@ -54,7 +52,7 @@ def get_size(board):
     Entrée : un des 2 plateaux (list[list[str]]).
     Sortie : Tuple des dimensions données au début n x m (Tuple[int,int]).
     """
-    return len(board), len(board[0])  # On retourne les dimensions de la matrice crée au début du jeu
+    return len(board), len(board[0])
 
 
 def get_neighbors(board, pos_x, pos_y):
@@ -66,9 +64,9 @@ def get_neighbors(board, pos_x, pos_y):
     (n, m), neighbors = get_size(board), []  # Variable des dimensions n et m du plateau et liste des coordonnées des voisins de la case choisie.
     for i in range(-1, 2):  # 2 boucles allant de -1 à +1 pour déterminer les cases qui entourent la case choisie.
         for j in range(-1, 2):
-            if m > pos_x + j >= 0 <= pos_y + i < n and (i != 0 or j != 0):  # Si c'est une case du board et ce n'est pas la case choisie,
-                neighbors.append([pos_x + j, pos_y + i])  # on ajoute les coordonnées des cases voisines dans la liste "neighbors".
-    return neighbors  # On retourne la liste "neighbors".
+            if m > pos_x + j >= 0 <= pos_y + i < n and (i != 0 or j != 0):
+                neighbors.append([pos_x + j, pos_y + i])  # on ajoute les coordonnées des cases voisines dans la liste si elle est dans le board et s'il
+    return neighbors
 
 
 def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
@@ -78,14 +76,12 @@ def place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y):
     Sortie : liste des coordonnées des cases où ont été placées les mines (List[Tuple[int,int]]).
     """
     neighbors, mines_list, (n, m) = get_neighbors(reference_board, first_pos_x, first_pos_y), [], get_size(reference_board)
-    # Liste des voisins de la première case choisie, une liste pour y ajouter les mines du plateau et les dimensions n et m du plateau.
     while len(mines_list) != number_of_mines:  # Tant qu'il n'y a pas autant de mines dans la liste que le nombre de mines choisi,
         ord_y, abs_x = randint(0, n - 1), randint(0, m - 1)  # On va déterminer une coordonnée de mine de manière aléatoire.
         if [ord_y, abs_x] not in mines_list and [abs_x, ord_y] not in neighbors and [abs_x, ord_y] != [first_pos_x, first_pos_y]:
-            # Si la mine fait déjà partie de la liste des mines, des voisins de la première case et que ce n'est pas la première case,
             reference_board[ord_y][abs_x] = 'X'  # on place la mine dans sa case au plateau de jeu de référence
             mines_list.append([ord_y, abs_x])  # et on ajoute les coordonnées de la mine en question dans la liste des mines.
-    return mines_list  # On retourne la liste des mines.
+    return mines_list
 
 
 def fill_in_board(reference_board):
@@ -104,18 +100,17 @@ def propagate_click(game_board, reference_board, pos_x, pos_y):
     Fonction qui dévoile les cases voisines de celles qui sont révélées si dans les deux cas elles valent 0.
     Entrée : les matrices des plateaux de référence et de jeu (List[List[str]])et les coordonnées n et m de la case traitée (int).
     """
-    if game_board[pos_y][pos_x] != 'F':  # Si la case n'est pas un flag, on actualise le plateau de jeu.
-        game_board[pos_y][pos_x], zero = reference_board[pos_y][pos_x], []  # zero : liste contenant les coordonnées des cases qui valent 0 si la case traitée vaut aussi 0.
-        if reference_board[pos_y][pos_x] == '0':  # Si la case traitée vaut 0,
+    if game_board[pos_y][pos_x] != 'F':
+        game_board[pos_y][pos_x], zero = reference_board[pos_y][pos_x], []
+        if reference_board[pos_y][pos_x] == '0':
             for i, j in get_neighbors(game_board, pos_x, pos_y):  # on crée une boucle examiner les cases voisines de celle qui est traitée.
-                if game_board[j][i] != 'F':  # Si la case n'est pas sous pas un flag,
-                    game_board[j][i] = reference_board[j][i]  # on la dévoile.
-                if game_board[j][i] == '0':  # Si l'une d'entre elles vaut 0,
+                if game_board[j][i] != 'F':
+                    game_board[j][i] = reference_board[j][i]
+                if game_board[j][i] == '0':
                     for k, l in get_neighbors(game_board, i, j):  # on crée une boucle pour examiner toutes les cases qui l'entourent.
                         if (i, j) != (k, l) != (pos_x, pos_y) and (k, l) not in zero and game_board[l][k] != reference_board[l][k]:
-                            # Si la cases n'est pas dans la liste zero, qu'elle ne correspond à aucune des cases traités plus haut et qu'elle n'a pas encore été révélée,
-                            zero.append((k, l))  # on ajoute les coordonnées de cette case dans la liste zero.
-            for i, j in zero:  # On crée une boucle pour traiter les cases dont les coordonnées sont dans la liste.
+                            zero.append((k, l))  # on ajoute les coordonnées de cette case dans la liste zero si la case n'a pas été traitée plus haut.
+            for i, j in zero:
                 propagate_click(game_board, reference_board, i, j)  # On applique la récursion à la fonction pour dévoiler les voisins de chacune d'entre elles.
 
 
@@ -126,10 +121,9 @@ def parse_input(n, m):
     Sortie : L'action choisie (str), et la position x et la position y de la case choisie (int) le tout dans un tuple (Tuple[str, int, int]).
     """
     game = str(input("Choix d'une case : ")).split()  # On transforme en une liste les données entrées par personnage.
-    while not (len(game) == 3 and game[0] in 'CcFf' and game[1].isdigit() and game[2].isdigit() and m > int(game[1]) >= 0 <= int(game[2]) < n):
-        # Tant qu'il y n'y a pas 3 éléments dans la liste qui correspondent bien aux actions déterminées et aux coordonnées qui sont dans le plateau,
-        game = str(input("Choix d'une case : ")).split()  # on redemande au joueur d'entrer ses données correctement.
-    return game[0].lower(), int(game[2]), int(game[1])  # on retourne le tuple de données
+    if not (len(game) == 3 and game[0].isalpha() and game[0].lower() in 'cf' and game[1].isdigit() and game[2].isdigit() and m > int(game[1]) >= 0 <= int(game[2]) < n):
+        game = parse_input(n, m)  # on redemande au joueur d'entrer ses données jusqu'à ce qu'ils les entrent correctement si ça n'avait pas été le cas.
+    return game[0].lower(), int(game[2]), int(game[1])
 
 
 def check_win(game_board, reference_board, mines_list, total_flags):
@@ -138,9 +132,9 @@ def check_win(game_board, reference_board, mines_list, total_flags):
     Entrée : les plateaux de jeu et de référence (List[List[str]]), les coordonnées des mines (List[Tuple[int,int]]]) et le nombre de flags (int).
     Sortie : Booléen qui indique si le joueur a gagné ou pas (Bool)
     """
-    (n, m), mines = get_size(game_board), sum(1 for i, j in mines_list if game_board[i][j] == 'X') == 0  # On prend les dimensions du plateau, et on vérifie s'il y a une mine.
-    if not mines:  # S'il y a une mine dans le plateau :
-        for i in range(n):  # On crée une double boucle pour examiner chaque case des plateaux
+    (n, m), mines = get_size(game_board), sum(1 for i, j in mines_list if game_board[i][j] == 'X') == 0
+    if not mines:
+        for i in range(n):
             for j in range(m):
                 if game_board[i][j] != 'F' and [i, j] in mines_list:  # Si la case était vide alors que c'était une mine,
                     game_board[i][j] = reference_board[i][j]  # on dévoile la case (qui est une mine).
@@ -165,7 +159,7 @@ def init_game(n, m, number_of_mines):
         print_board(game_board)
         action, first_pos_x, first_pos_y = parse_input(n, m)  # et on redemande au joueur d'entrer sa commande.
     mines_list = place_mines(reference_board, number_of_mines, first_pos_x, first_pos_y)  # On place les mines et on récupère la liste des coordonnées de celles-ci.
-    reference_board[first_pos_y][first_pos_x], game_board[first_pos_y][first_pos_x] = '0', '0'  # La première case dévoilée est d'office un zéro dans les deux plateaux.
+    reference_board[first_pos_y][first_pos_x], game_board[first_pos_y][first_pos_x] = '0', '0'
     fill_in_board(reference_board)  # On remplit le plateau de référence.
     propagate_click(game_board, reference_board, first_pos_x, first_pos_y)  # On dévoile les cases voisines de celle qui a été révélée.
     print_board(game_board)
@@ -178,33 +172,29 @@ def main():
     les dimensions du plateau et le nombre de mines et contient une boucle qui finira à la fin de la partie.
     """
     if len(sys.argv) == 4 and sys.argv[3].isdigit() and sys.argv[1].isdigit() and sys.argv[2].isdigit():  # Si les 3 valeurs entrées sont bien des chiffres,
-        # si le nombre de mines (supérieur à 0) est inférieur au nombre de cases disponibles moins 9 (1ère case + 8 (nombre de voisins maximal)),
-        if int(sys.argv[1]) * int(sys.argv[2]) - 8 > int(sys.argv[3]) > 0 and int(sys.argv[1]) <= 100 >= int(sys.argv[2]):  # et si n et m sont inférieurs à 100,
-            n, m, number_of_mines = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])  # création des variables des dimensions n et m et de celui du nombre de mines.
-            sys.setrecursionlimit(n * m)  # On détermine la limite de récursion au produit des dimensions n et m ci-contre puis on initialise le début du jeu ci-dessous.
-            (game_board, reference_board, mines_list), win = init_game(n, m, number_of_mines), {True: "Bravo, vous avez gagné !", False: "Dommage, vous avez perdu."}
-            # win : dictionnaire qui envoie un message de victoire ou défaite, m_flags : nombre de flags sur des mines, flags : nombre total de flags sur le plateau de jeu.
-            m_flags, flags, mines = sum(1 for i, j in mines_list if game_board[i][j] == 'F'), sum(1 for i, j in mines_list if game_board[i][j] == 'F'), True
-            # game : dit si le joueur a gagné, mines : booléen qui indique si une mine est dévoilée, hide : nombre de cases (hors flags) non dévoilées.
-            hide, game = sum(1 for i in range(n) for j in range(m) if game_board[i][j] == '.'), check_win(game_board, reference_board, mines_list, flags)
-            if not game:  # Si le joueur n'a pas gagné la partie avant qu'elle ne commence,
-                while not ((m_flags == flags and hide + flags == number_of_mines) or m_flags == flags == number_of_mines) and mines:
-                    # Tant que le joueur n'a pas touché de mines et qu'il n'a pas posé de flags sur les mines ou dévoilé toutes les cases sauf les mines,
-                    action, pos_x, pos_y = parse_input(n, m)  # On demande au joueur les données de jeu qu'il veut entrer.
-                    if action == 'c':  # Si l'action choisie par le joueur est un 'c',
+        n, m, number_of_mines = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
+        if n * m - 8 > number_of_mines > 0 and n <= 100 >= m:  # et si n et m sont inférieurs à 100 et qu'il n'y a pas trop de mines,
+            sys.setrecursionlimit((n * m) ** 2)  # On limite la récursion.
+            (game_board, reference_board, mines_list), win_dictionary = init_game(n, m, number_of_mines), {True: "Bravo, vous avez gagné !", False: "Dommage, vous avez perdu."}
+            flags_on_mines, total_flags, mines = sum(1 for i, j in mines_list if game_board[i][j] == 'F'), sum(1 for i, j in mines_list if game_board[i][j] == 'F'), True
+            hidden_boxes, game_win = sum(1 for i in range(n) for j in range(m) if game_board[i][j] == '.'), check_win(game_board, reference_board, mines_list, total_flags)
+            if not game_win:  # Si le joueur n'a pas gagné la partie avant qu'elle ne commence et si c'est le cas, tant que l'utilisateur n'a pas perdu ou gagné,
+                while not ((flags_on_mines == total_flags and hidden_boxes + total_flags == number_of_mines) or flags_on_mines == total_flags == number_of_mines) and mines:
+                    action, pos_x, pos_y = parse_input(n, m)
+                    if action == 'c':
                         game_board[pos_y][pos_x] = reference_board[pos_y][pos_x]  # on dévoile la case en avance au cas où c'est un flag.
                         propagate_click(game_board, reference_board, pos_x, pos_y)  # et on dévoile les cases voisines si la case est un 0.
-                    else:  # Si l'action choisie par le joueur est 'f',
-                        game_board[pos_y][pos_x] = 'F'  # on pose un flag sur la case choisie et on ajoute 1 au nombre total de
-                    mines, hide = sum(1 for i, j in mines_list if game_board[i][j] == 'X') == 0, sum(1 for i in range(n) for j in range(m) if game_board[i][j] == '.')
-                    # On inspecte si le joueur a choisi de dévoiler une mine et on inspecte si le joueur a choisi de dévoiler une mine et
-                    m_flags, flags = sum(1 for i, j in mines_list if game_board[i][j] == 'F'), sum(1 for i, j in mines_list if game_board[i][j] == 'F')
-                    # On compte le nombre de flags qui sont sur des mines et le nombre de flags sur le plateau de jeu.
-                    game = check_win(game_board, reference_board, mines_list, flags)  # On vérifie si le joueur a perdu pour dévoiler toutes les mines.
+                    elif action == 'f' and game_board[pos_y][pos_x] == 'F':  # Si la case est déjà sous un flag,
+                        game_board[pos_y][pos_x] = reference_board[pos_y][pos_x]  # ça veut dire que l'utilisateur désire dévoiler la case sous flag.
+                    elif action == 'f' and game_board[pos_y][pos_x] == '.':
+                        game_board[pos_y][pos_x] = 'F'
+                    mines, hidden_boxes = sum(1 for i, j in mines_list if game_board[i][j] == 'X') == 0, sum(1 for i in range(n) for j in range(m) if game_board[i][j] == '.')
+                    flags_on_mines, total_flags = sum(1 for i, j in mines_list if game_board[i][j] == 'F'), sum(1 for i, j in mines_list if game_board[i][j] == 'F')
+                    game_win = check_win(game_board, reference_board, mines_list, total_flags)
                     print_board(game_board)
-            print(win[game])  # On retourne un message de victoire ou de défaite à l'utilisateur à la fin du jeu.
+            print(win_dictionary[game_win])  # On retourne un message de victoire ou de défaite à l'utilisateur à la fin du jeu.
 
 
 # Code principal.
-if __name__ == '__main__':  # Import du fichier via test conditionnel
-    main()  # Appel à la fonction principale du jeu
+if __name__ == '__main__':
+    main()
