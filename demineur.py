@@ -1,8 +1,7 @@
 """
 Jeu démineur.
-Prenom : Stéphane.
+Prenom : Chris.
 Nom : Badi Budu.
-Matricule : 569 082.
 Petit jeu à jouer dans le terminal qui consiste à trouver les mines du
 plateau de jeu, ou à dévoiler toutes les cases sans tomber sur une mine.
 Date : 1er décembre 2022.
